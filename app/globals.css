@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   THÈME MADAWEAVER TOUR — éditorial « terre & tissage malgache »
+   Terracotta · crème · charbon · titres serif Playfair. Inspiré du lamba.
+   ========================================================================== */
+
+@theme {
+  /* Neutres chauds */
+  --color-cream: #f4ecdf;
+  --color-cream-2: #efe4d3;
+  --color-paper: #fffdf8;
+  --color-sand-100: #efe4d3;
+  --color-sand-200: #e5d6bd;
+  --color-sand-300: #d6c2a1;
+  --color-ink: #2c2621;
+  --color-ink-soft: #6f665a;
+
+  /* Marque */
+  --color-baobab: #bf6a47;
+  --color-baobab-dark: #9f5233;
+  --color-baobab-light: #d89d81;
+  --color-jungle: #4a6b52;
+  --color-jungle-light: #6a8b6f;
+  --color-gold: #cf9a4e;
+  --color-ocean: #3f8f92;
+  --color-charcoal: #2a2521;
+
+  /* Polices (injectées via next/font dans layout.tsx) */
+  --font-display: var(--font-display-src), Georgia, serif;
+  --font-sans: var(--font-body-src), system-ui, sans-serif;
+
+  /* Animations */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------------------------------ Base */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-baobab);
+  color: #fff;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+/* ------------------------------------------------- Utilitaires réutilisables */
+
+@layer utilities {
+  .container-x {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  /* Titre de section en capitales espacées (style éditorial) */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-baobab);
+  }
+
+  .text-gradient {
+    background: linear-gradient(100deg, var(--color-baobab), var(--color-gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Motif tissé malgache (lamba) — bandes fines, très subtil */
+  .bg-lamba {
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(191, 106, 71, 0.10) 0px,
+      rgba(191, 106, 71, 0.10) 2px,
+      transparent 2px,
+      transparent 7px,
+      rgba(74, 107, 82, 0.08) 7px,
+      rgba(74, 107, 82, 0.08) 9px,
+      transparent 9px,
+      transparent 16px
+    );
+  }
+
+  .bg-noise {
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    );
+    background-size: 4px 4px;
+  }
+
+  /* Lien "learn more" souligné terracotta */
+  .link-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-baobab);
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+    transition: color 0.2s;
+  }
+  .link-more:hover { color: var(--color-baobab-dark); }
+}
+
+/* Respecte la préférence « animations réduites » */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
