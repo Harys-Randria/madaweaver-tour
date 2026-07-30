@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Star, MessageCircle } from "lucide-react";
+import { ArrowRight, Star, MessageCircle, BadgeCheck } from "lucide-react";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { getFeatured } from "@/lib/data";
@@ -14,6 +14,9 @@ import CircuitCard from "@/components/CircuitCard";
 import UtilityBar from "@/components/UtilityBar";
 import MadagascarMap from "@/components/MadagascarMap";
 import ContactForm from "@/components/ContactForm";
+import TrustBand from "@/components/TrustBand";
+import Reassurance from "@/components/Reassurance";
+import Monogram from "@/components/Monogram";
 
 export default async function HomePage({
   params,
@@ -33,16 +36,50 @@ export default async function HomePage({
       <section className="container-x pt-8 sm:pt-12">
         <div className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
           <Reveal>
-            <div className="max-w-lg">
-              <p className="eyebrow">{l.exploreEyebrow}</p>
-              <h1 className="mt-3 font-display text-5xl font-semibold leading-[0.95] tracking-tight text-ink sm:text-7xl">
-                {l.country}
+            <div className="max-w-xl">
+              <span className="inline-flex items-center gap-2 rounded-full bg-baobab/10 px-3 py-1 text-xs font-semibold text-baobab">
+                <span className="badge-dot" />
+                {dict.hero.badge}
+              </span>
+              <p className="eyebrow mt-4">{dict.hero.welcome}</p>
+              <h1 className="mt-3 font-display text-4xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-6xl">
+                {dict.hero.title}
               </h1>
-              <p className="mt-5 text-base leading-relaxed text-ink-soft">{l.intro}</p>
-              <Link href={`/${locale}/about`} className="link-more mt-6">
-                {l.learnMore}
-                <ArrowRight size={15} />
-              </Link>
+              <p className="mt-5 text-base leading-relaxed text-ink-soft">{dict.hero.subtitle}</p>
+
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Link
+                  href={`/${locale}/circuits`}
+                  className="inline-flex items-center gap-2 rounded-full bg-baobab px-6 py-3 text-sm font-semibold text-white transition hover:bg-baobab-dark"
+                >
+                  {dict.hero.ctaPrimary}
+                  <ArrowRight size={16} />
+                </Link>
+                <a
+                  href={whatsappLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-ink ring-1 ring-ink/15 transition hover:bg-sand-100"
+                >
+                  <MessageCircle size={16} />
+                  {dict.hero.ctaSecondary}
+                </a>
+              </div>
+
+              <dl className="mt-9 grid max-w-md grid-cols-3 gap-4 border-t border-sand-200 pt-6">
+                {[
+                  { n: "120+", l: dict.hero.stat1 },
+                  { n: "2 500+", l: dict.hero.stat2 },
+                  { n: "10+", l: dict.hero.stat3 },
+                ].map((s) => (
+                  <div key={s.l}>
+                    <dt className="font-display text-2xl font-semibold text-baobab sm:text-3xl">
+                      {s.n}
+                    </dt>
+                    <dd className="mt-1 text-xs leading-snug text-ink-soft">{s.l}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
           </Reveal>
 
@@ -57,6 +94,9 @@ export default async function HomePage({
           <UtilityBar lang={locale} dict={dict} scrollTarget="#content" />
         </div>
       </section>
+
+      {/* ============================================ POURQUOI NOUS (confiance) */}
+      <TrustBand dict={dict} />
 
       {/* ============================================ NOTRE PHILOSOPHIE */}
       <section id="content" className="container-x scroll-mt-24 py-20 sm:py-28">
@@ -125,28 +165,51 @@ export default async function HomePage({
       <section className="bg-cream-2 py-20 sm:py-24">
         <div className="container-x">
           <Reveal>
-            <h2 className="font-display text-4xl font-semibold text-ink">
-              {dict.testimonials.title}
-            </h2>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <span className="lamba-mark" />
+                <h2 className="mt-3 font-display text-4xl font-semibold text-ink">
+                  {dict.testimonials.title}
+                </h2>
+                <p className="mt-2 text-ink-soft">{dict.testimonials.subtitle}</p>
+              </div>
+              <div className="inline-flex items-center gap-3 self-start rounded-full bg-paper px-4 py-2 shadow-sm ring-1 ring-ink/8 sm:self-auto">
+                <div className="flex gap-0.5 text-gold">
+                  {Array.from({ length: 5 }).map((_, s) => (
+                    <Star key={s} size={15} fill="currentColor" />
+                  ))}
+                </div>
+                <span className="text-sm">
+                  <span className="font-semibold text-ink">{dict.testimonials.rating}</span>
+                  <span className="ml-1 text-ink-soft">· {dict.testimonials.count}</span>
+                </span>
+              </div>
+            </div>
           </Reveal>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {dict.testimonials.items.map((tm, i) => (
               <Reveal key={tm.author} delay={i * 0.1} as="div">
-                <figure className="flex h-full flex-col">
-                  <div className="font-display text-5xl leading-none text-baobab/40">“</div>
-                  <blockquote className="-mt-2 flex-1 font-display text-lg italic leading-relaxed text-ink">
-                    {tm.quote}
+                <figure className="flex h-full flex-col rounded-2xl bg-paper p-7 shadow-sm ring-1 ring-ink/8">
+                  <div className="flex gap-0.5 text-gold">
+                    {Array.from({ length: 5 }).map((_, s) => (
+                      <Star key={s} size={14} fill="currentColor" />
+                    ))}
+                  </div>
+                  <blockquote className="mt-4 flex-1 font-display text-lg italic leading-relaxed text-ink">
+                    “{tm.quote}”
                   </blockquote>
-                  <figcaption className="mt-4 flex items-center gap-2">
-                    <div className="flex gap-0.5 text-gold">
-                      {Array.from({ length: 5 }).map((_, s) => (
-                        <Star key={s} size={13} fill="currentColor" />
-                      ))}
+                  <figcaption className="mt-5 flex items-center gap-3">
+                    <Monogram name={tm.author} size={42} />
+                    <div>
+                      <p className="text-sm font-semibold text-ink">
+                        {tm.author}
+                        <span className="ml-1 font-normal text-ink-soft">· {tm.origin}</span>
+                      </p>
+                      <p className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-jungle">
+                        <BadgeCheck size={13} />
+                        {dict.testimonials.verified}
+                      </p>
                     </div>
-                    <span className="text-sm font-semibold text-ink">
-                      {tm.author}
-                      <span className="ml-1 font-normal text-ink-soft">· {tm.origin}</span>
-                    </span>
                   </figcaption>
                 </figure>
               </Reveal>
@@ -154,6 +217,10 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+
+      {/* ============================================ RUBAN LAMBA + RÉASSURANCE */}
+      <div className="lamba-band" aria-hidden="true" />
+      <Reassurance dict={dict} />
 
       {/* ============================================ FORMULAIRE DE CONTACT */}
       <section className="container-x py-20 sm:py-28">

@@ -7,6 +7,7 @@ import { getDictionary } from "@/lib/dictionaries";
 import Scenery from "@/components/Scenery";
 import WovenArt from "@/components/WovenArt";
 import Reveal from "@/components/Reveal";
+import TeamGrid from "@/components/TeamGrid";
 
 export async function generateMetadata({
   params,
@@ -114,15 +115,15 @@ export default async function AboutPage({
         </Reveal>
       </section>
 
-      {/* ============================ ÉQUIPE + CTA */}
+      {/* ============================ ÉQUIPE (visages) */}
+      <TeamGrid dict={dict} />
+
+      {/* ============================ CTA */}
       <section className="container-x">
         <Reveal>
           <div className="rounded-2xl bg-baobab px-6 py-14 text-center text-white sm:px-16">
-            <h2 className="font-display text-3xl font-semibold sm:text-4xl">{a.teamTitle}</h2>
+            <h2 className="font-display text-3xl font-semibold sm:text-4xl">{a.ctaTitle}</h2>
             <p className="mx-auto mt-3 max-w-xl text-white/90">{a.teamText}</p>
-            <p className="mx-auto mt-6 max-w-lg font-display text-xl italic text-cream">
-              {a.ctaTitle}
-            </p>
             <Link
               href={`/${locale}/contact`}
               className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-baobab-dark transition hover:bg-cream"

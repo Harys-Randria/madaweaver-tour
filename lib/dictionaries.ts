@@ -15,6 +15,7 @@ const dictionaries = {
       book: "Book now",
     },
     hero: {
+      welcome: "Tongasoa — welcome to Madagascar",
       badge: "Local agency · Since 2014",
       title: "Discover the wild soul of Madagascar",
       subtitle:
@@ -62,6 +63,10 @@ const dictionaries = {
     },
     testimonials: {
       title: "Travellers' words",
+      subtitle: "Real journeys, real words — from travellers across the world.",
+      verified: "Verified reviews",
+      rating: "4.9/5",
+      count: "based on 180+ reviews",
       items: [
         {
           quote:
@@ -200,8 +205,36 @@ const dictionaries = {
       teamTitle: "The people behind your trip",
       teamText:
         "Guides, drivers, naturalists and planners — all Malagasy, all passionate about sharing their island.",
+      teamMembersTitle: "Meet the team",
+      team: [
+        { name: "Tantely Rakoto", role: "Lead guide & naturalist" },
+        { name: "Njaka Andriamahefa", role: "Expedition chief & driver" },
+        { name: "Hasina Miora", role: "Travel designer" },
+        { name: "Mamy Rabe", role: "Dive guide · East coast" },
+      ],
       ctaTitle: "Let's build your adventure together",
       ctaButton: "Get in touch",
+    },
+    reassurance: {
+      title: "Book with peace of mind",
+      items: [
+        {
+          title: "Registered local agency",
+          text: "A licensed Malagasy tour operator based in Antananarivo.",
+        },
+        {
+          title: "Licensed guides",
+          text: "Certified local guides, fluent in English & French.",
+        },
+        {
+          title: "Pay after confirmation",
+          text: "No payment until we've shaped your itinerary together.",
+        },
+        {
+          title: "24/7 WhatsApp support",
+          text: "A real person — before, during and after your trip.",
+        },
+      ],
     },
     landing: {
       exploreEyebrow: "Explore",
@@ -269,6 +302,7 @@ const dictionaries = {
       book: "Réserver",
     },
     hero: {
+      welcome: "Tongasoa — bienvenue à Madagascar",
       badge: "Agence locale · Depuis 2014",
       title: "Découvrez l'âme sauvage de Madagascar",
       subtitle:
@@ -316,6 +350,10 @@ const dictionaries = {
     },
     testimonials: {
       title: "La parole aux voyageurs",
+      subtitle: "De vrais voyages, de vrais mots — de voyageurs du monde entier.",
+      verified: "Avis vérifiés",
+      rating: "4,9/5",
+      count: "sur 180+ avis",
       items: [
         {
           quote:
@@ -454,8 +492,36 @@ const dictionaries = {
       teamTitle: "Les visages derrière votre voyage",
       teamText:
         "Guides, chauffeurs, naturalistes et planificateurs — tous malgaches, tous passionnés de partager leur île.",
+      teamMembersTitle: "Faites connaissance",
+      team: [
+        { name: "Tantely Rakoto", role: "Guide principal & naturaliste" },
+        { name: "Njaka Andriamahefa", role: "Chef d'expédition & chauffeur" },
+        { name: "Hasina Miora", role: "Conceptrice de voyages" },
+        { name: "Mamy Rabe", role: "Guide plongée · Côte Est" },
+      ],
       ctaTitle: "Construisons votre aventure ensemble",
       ctaButton: "Nous contacter",
+    },
+    reassurance: {
+      title: "Réservez l'esprit tranquille",
+      items: [
+        {
+          title: "Agence locale enregistrée",
+          text: "Un tour-opérateur malgache licencié, basé à Antananarivo.",
+        },
+        {
+          title: "Guides licenciés",
+          text: "Des guides locaux certifiés, francophones et anglophones.",
+        },
+        {
+          title: "Paiement après confirmation",
+          text: "Aucun paiement avant d'avoir façonné votre itinéraire ensemble.",
+        },
+        {
+          title: "Assistance WhatsApp 24/7",
+          text: "Une vraie personne — avant, pendant et après votre voyage.",
+        },
+      ],
     },
     landing: {
       exploreEyebrow: "Explorer",

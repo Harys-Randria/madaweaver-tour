@@ -118,6 +118,44 @@ h1, h2, h3, .font-display {
     background-size: 4px 4px;
   }
 
+  /* Signature « lamba » — bandes tissées multicolores (terre · or · rizière · océan) */
+  .lamba-band {
+    height: 6px;
+    width: 100%;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-baobab) 0 9px,
+      var(--color-gold) 9px 13px,
+      var(--color-jungle) 13px 17px,
+      var(--color-ocean) 17px 21px
+    );
+    opacity: 0.9;
+  }
+
+  /* Petit trait tissé décoratif sous les titres */
+  .lamba-mark {
+    display: inline-block;
+    width: 2.75rem;
+    height: 4px;
+    border-radius: 999px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--color-baobab) 0 6px,
+      var(--color-gold) 6px 9px,
+      var(--color-jungle) 9px 12px
+    );
+  }
+
+  /* Pastille « en ligne / confiance » */
+  .badge-dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-jungle);
+    box-shadow: 0 0 0 3px rgba(74, 107, 82, 0.2);
+  }
+
   /* Lien "learn more" souligné terracotta */
   .link-more {
     display: inline-flex;
