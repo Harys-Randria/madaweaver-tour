@@ -15,6 +15,7 @@ import {
   Waves,
   Landmark,
   Compass,
+  MessageCircle,
 } from "lucide-react";
 import { isLocale, t, locales, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
@@ -24,6 +25,7 @@ import {
   circuitGalleryTones,
 } from "@/lib/circuits";
 import { getAllCircuits, getCircuitBySlug } from "@/lib/data";
+import { whatsappLink } from "@/lib/site";
 
 export const revalidate = 30;
 export const dynamicParams = true;
@@ -137,6 +139,20 @@ export default async function CircuitDetailPage({
             <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">
               {t(circuit.title, locale)}
             </h1>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a
+                href="#booking"
+                className="inline-flex items-center gap-2 rounded-full bg-baobab px-6 py-3 text-sm font-semibold text-white transition hover:bg-baobab-dark"
+              >
+                {d.bookNow}
+              </a>
+              <Link
+                href={`/${locale}/sur-mesure`}
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/40 backdrop-blur transition hover:bg-white/20"
+              >
+                {d.customize}
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -321,6 +337,34 @@ export default async function CircuitDetailPage({
       <section id="booking" className="container-x mt-20 scroll-mt-24">
         <div className="mx-auto max-w-2xl rounded-2xl bg-paper p-7 shadow-sm ring-1 ring-ink/8 sm:p-9">
           <BookingForm circuitTitle={t(circuit.title, locale)} b={dict.booking} lang={locale} />
+        </div>
+      </section>
+
+      {/* ============================================== DEVIS SUR-MESURE */}
+      <section className="container-x mt-20">
+        <div className="overflow-hidden rounded-2xl bg-charcoal bg-noise px-6 py-12 text-center text-cream sm:px-16">
+          <div className="mb-5 flex justify-center">
+            <span className="lamba-mark" />
+          </div>
+          <h2 className="font-display text-2xl font-semibold sm:text-3xl">{d.quoteTitle}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-cream/80">{d.quoteText}</p>
+          <div className="mt-7 flex flex-wrap justify-center gap-3">
+            <Link
+              href={`/${locale}/sur-mesure`}
+              className="inline-flex items-center gap-2 rounded-full bg-baobab px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-baobab-dark"
+            >
+              {d.quoteButton}
+            </Link>
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-semibold text-white transition hover:brightness-95"
+            >
+              <MessageCircle size={17} />
+              WhatsApp
+            </a>
+          </div>
         </div>
       </section>
 

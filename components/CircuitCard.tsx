@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Clock, MapPin } from "lucide-react";
-import type { Circuit } from "@/lib/circuits";
+import { Clock, MapPin, ArrowRight } from "lucide-react";
+import { categoryLabel, type Circuit } from "@/lib/circuits";
 import { t, type Locale } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/dictionaries";
 import Scenery from "./Scenery";
@@ -19,7 +19,7 @@ export default function CircuitCard({
   return (
     <Link
       href={`/${lang}/circuits/${circuit.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-ink/8 transition-all duration-300 hover:-translate-y-1 hover:ring-baobab/30"
+      className="group flex flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-ink/8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/10 hover:ring-baobab/30"
     >
       <div className="relative aspect-16/10 overflow-hidden">
         {circuit.gallery?.[0] ? (
@@ -35,9 +35,22 @@ export default function CircuitCard({
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         )}
+
+        {/* Badge catégorie (haut-gauche) */}
+        <span className="absolute left-2.5 top-2.5 inline-flex items-center rounded-full bg-baobab px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
+          {categoryLabel(circuit.category, lang)}
+        </span>
+
+        {/* Région (bas-gauche) */}
         <span className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 rounded-full bg-charcoal/70 px-2.5 py-1 text-[11px] font-medium text-cream backdrop-blur">
           <MapPin size={11} />
           {circuit.region}
+        </span>
+
+        {/* Durée (bas-droite) */}
+        <span className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-ink backdrop-blur">
+          <Clock size={11} className="text-baobab" />
+          {circuit.durationDays} {dict.card.days}
         </span>
       </div>
 
@@ -46,19 +59,24 @@ export default function CircuitCard({
           {t(circuit.title, lang)}
         </h3>
 
-        <div className="mt-2 flex items-center gap-1.5 text-sm text-ink-soft">
-          <Clock size={14} className="text-baobab" />
-          {circuit.durationDays} {dict.card.days}
-        </div>
-
-        <p className="mt-3 text-sm leading-relaxed text-ink-soft">
+        <p className="mt-2.5 flex-1 text-sm leading-relaxed text-ink-soft">
           <span className="font-semibold text-ink">{dict.detail.highlights}: </span>
           {highlight}
         </p>
 
-        <span className="mt-5 inline-flex items-center justify-center rounded-lg bg-baobab px-4 py-2.5 text-sm font-semibold text-white transition-colors group-hover:bg-baobab-dark">
-          {dict.card.details}
-        </span>
+        <div className="mt-5 flex items-center justify-between border-t border-sand-200 pt-4">
+          <div className="flex items-baseline gap-1">
+            <span className="text-xs text-ink-soft">{dict.card.from}</span>
+            <span className="font-display text-xl font-semibold text-baobab">
+              €{circuit.priceFrom}
+            </span>
+            <span className="text-xs text-ink-soft">{dict.card.perPerson}</span>
+          </div>
+          <span className="inline-flex items-center gap-1 text-sm font-semibold text-baobab transition-all group-hover:gap-2">
+            {dict.card.details}
+            <ArrowRight size={15} />
+          </span>
+        </div>
       </div>
     </Link>
   );

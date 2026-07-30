@@ -112,6 +112,12 @@ export default async function ContactPage({
         {/* Colonne droite : formulaire */}
         <Reveal delay={0.1} as="div">
           <div>
+            <p className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-jungle/10 px-3 py-1 text-xs font-semibold text-jungle">
+              <span className="badge-dot" />
+              {locale === "fr"
+                ? "Réponse en quelques heures · Devis gratuit"
+                : "Reply within hours · Free quote"}
+            </p>
             <ContactForm dict={dict} lang={locale} />
             <Link
               href={`/${locale}/circuits`}

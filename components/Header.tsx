@@ -25,6 +25,7 @@ export default function Header({ lang, dict }: { lang: Locale; dict: Dictionary 
   const links = [
     { href: `/${lang}`, label: dict.nav.home },
     { href: `/${lang}/circuits`, label: dict.nav.circuits },
+    { href: `/${lang}/sur-mesure`, label: dict.nav.custom },
     { href: `/${lang}/gallery`, label: dict.nav.gallery },
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/contact`, label: dict.nav.contact },
@@ -81,10 +82,10 @@ export default function Header({ lang, dict }: { lang: Locale; dict: Dictionary 
           </Link>
 
           <Link
-            href={`/${lang}/contact`}
+            href={`/${lang}/sur-mesure`}
             className="ml-1 hidden rounded-full bg-baobab px-5 py-2 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-baobab-dark sm:inline-flex"
           >
-            {dict.nav.book}
+            {dict.nav.quote}
           </Link>
 
           <button
@@ -113,10 +114,10 @@ export default function Header({ lang, dict }: { lang: Locale; dict: Dictionary 
               </Link>
             ))}
             <Link
-              href={`/${lang}/contact`}
+              href={`/${lang}/sur-mesure`}
               className="mt-2 inline-flex justify-center rounded-full bg-baobab px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white"
             >
-              {dict.nav.book}
+              {dict.nav.quote}
             </Link>
           </div>
         </div>

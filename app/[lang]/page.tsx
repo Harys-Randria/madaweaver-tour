@@ -7,7 +7,6 @@ import { getFeatured } from "@/lib/data";
 import { whatsappLink } from "@/lib/site";
 
 export const revalidate = 30;
-import Scenery from "@/components/Scenery";
 import WovenArt from "@/components/WovenArt";
 import Reveal from "@/components/Reveal";
 import CircuitCard from "@/components/CircuitCard";
@@ -32,65 +31,64 @@ export default async function HomePage({
 
   return (
     <>
-      {/* ===================================================== HERO */}
-      <section className="container-x pt-8 sm:pt-12">
-        <div className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
-          <Reveal>
-            <div className="max-w-xl">
-              <span className="inline-flex items-center gap-2 rounded-full bg-baobab/10 px-3 py-1 text-xs font-semibold text-baobab">
-                <span className="badge-dot" />
-                {dict.hero.badge}
-              </span>
-              <p className="eyebrow mt-4">{dict.hero.welcome}</p>
-              <h1 className="mt-3 font-display text-4xl font-semibold leading-[1.02] tracking-tight text-ink sm:text-6xl">
-                {dict.hero.title}
-              </h1>
-              <p className="mt-5 text-base leading-relaxed text-ink-soft">{dict.hero.subtitle}</p>
+      {/* ===================================================== HERO plein cadre */}
+      <section className="relative">
+        <div className="relative flex min-h-[78vh] items-center overflow-hidden sm:min-h-[86vh]">
+          {/* Fond : placeholder SVG — remplaçable par une vraie photo/vidéo en une ligne */}
+          <img src="/baobab1.jpg" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/55 via-black/35 to-black/70" />
 
-              <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Link
-                  href={`/${locale}/circuits`}
-                  className="inline-flex items-center gap-2 rounded-full bg-baobab px-6 py-3 text-sm font-semibold text-white transition hover:bg-baobab-dark"
-                >
-                  {dict.hero.ctaPrimary}
-                  <ArrowRight size={16} />
-                </Link>
-                <a
-                  href={whatsappLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-ink ring-1 ring-ink/15 transition hover:bg-sand-100"
-                >
-                  <MessageCircle size={16} />
-                  {dict.hero.ctaSecondary}
-                </a>
+          <div className="container-x relative py-20 text-white">
+            <Reveal>
+              <div className="max-w-2xl">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider text-white ring-1 ring-white/25 backdrop-blur">
+                  <span className="badge-dot" />
+                  {dict.hero.welcome}
+                </span>
+                <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
+                  {dict.hero.title}
+                </h1>
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
+                  {dict.hero.subtitle}
+                </p>
+
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <Link
+                    href={`/${locale}/sur-mesure`}
+                    className="inline-flex items-center gap-2 rounded-full bg-baobab px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-black/25 transition hover:bg-baobab-dark"
+                  >
+                    {dict.hero.ctaDesign}
+                    <ArrowRight size={16} />
+                  </Link>
+                  <Link
+                    href={`/${locale}/circuits`}
+                    className="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-3.5 text-sm font-semibold text-white ring-1 ring-white/40 backdrop-blur transition hover:bg-white/20"
+                  >
+                    {dict.hero.ctaBrowse}
+                  </Link>
+                </div>
+
+                <dl className="mt-12 flex flex-wrap gap-x-10 gap-y-4 border-t border-white/20 pt-6">
+                  {[
+                    { n: "120+", l: dict.hero.stat1 },
+                    { n: "2 500+", l: dict.hero.stat2 },
+                    { n: "10+", l: dict.hero.stat3 },
+                  ].map((s) => (
+                    <div key={s.l}>
+                      <dt className="font-display text-3xl font-semibold text-gold">{s.n}</dt>
+                      <dd className="mt-0.5 text-xs uppercase tracking-wider text-white/70">
+                        {s.l}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-
-              <dl className="mt-9 grid max-w-md grid-cols-3 gap-4 border-t border-sand-200 pt-6">
-                {[
-                  { n: "120+", l: dict.hero.stat1 },
-                  { n: "2 500+", l: dict.hero.stat2 },
-                  { n: "10+", l: dict.hero.stat3 },
-                ].map((s) => (
-                  <div key={s.l}>
-                    <dt className="font-display text-2xl font-semibold text-baobab sm:text-3xl">
-                      {s.n}
-                    </dt>
-                    <dd className="mt-1 text-xs leading-snug text-ink-soft">{s.l}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.1}>
-            <div className="relative aspect-4/3 overflow-hidden rounded-2xl shadow-lg ring-1 ring-ink/8">
-              <Scenery tone="sunset" rich className="absolute inset-0 h-full w-full object-cover" />
-            </div>
-          </Reveal>
+            </Reveal>
+          </div>
         </div>
 
-        <div className="mt-6">
+        {/* Barre utilitaire tuilée sous le héros (indicateur de défilement + accès rapides) */}
+        <div className="container-x relative z-10 -mt-7">
           <UtilityBar lang={locale} dict={dict} scrollTarget="#content" />
         </div>
       </section>
