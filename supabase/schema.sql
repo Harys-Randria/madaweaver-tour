@@ -64,6 +64,25 @@ drop policy if exists "Auth write settings" on public.settings;
 create policy "Auth write settings"
   on public.settings for all to authenticated using (true) with check (true);
 
+-- 4) Destinations (grandes régions) — slug + region + sort + contenu bilingue
+create table if not exists public.destinations (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  region text not null default 'east',
+  sort int not null default 0,
+  content jsonb not null,            -- tout le contenu bilingue de la destination
+  updated_at timestamptz not null default now()
+);
+alter table public.destinations enable row level security;
+
+drop policy if exists "Public read destinations" on public.destinations;
+create policy "Public read destinations"
+  on public.destinations for select using (true);
+
+drop policy if exists "Auth write destinations" on public.destinations;
+create policy "Auth write destinations"
+  on public.destinations for all to authenticated using (true) with check (true);
+
 -- ============================================================================
 --  Ensuite : Dashboard → Authentication → Users → « Add user » pour créer le
 --  compte (email + mot de passe) de la personne qui administrera le site.

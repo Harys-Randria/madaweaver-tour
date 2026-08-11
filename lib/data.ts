@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { supabaseConfig, isSupabaseConfigured } from "./supabase/config";
 import { circuits as seedCircuits, type Circuit } from "./circuits";
+import { destinations as seedDestinations, type Destination } from "./destinations";
 import { site, type SiteSettings } from "./site";
 
 // ============================================================================
@@ -38,6 +39,29 @@ export async function getCircuitBySlug(slug: string): Promise<Circuit | undefine
 
 export async function getFeatured(): Promise<Circuit[]> {
   return (await getAllCircuits()).filter((c) => c.featured);
+}
+
+// ---------------------------------------------------------------------------
+//  Destinations — table `destinations`. Repli sur lib/destinations.ts.
+// ---------------------------------------------------------------------------
+export async function getAllDestinations(): Promise<Destination[]> {
+  if (!isSupabaseConfigured()) return seedDestinations;
+  try {
+    const supabase = publicClient();
+    const { data, error } = await supabase
+      .from("destinations")
+      .select("content, sort")
+      .order("sort", { ascending: true });
+    if (error || !data || data.length === 0) return seedDestinations;
+    return data.map((row) => row.content as Destination);
+  } catch {
+    return seedDestinations;
+  }
+}
+
+export async function getDestinationBySlug(slug: string): Promise<Destination | undefined> {
+  const all = await getAllDestinations();
+  return all.find((d) => d.slug === slug);
 }
 
 // ---------------------------------------------------------------------------

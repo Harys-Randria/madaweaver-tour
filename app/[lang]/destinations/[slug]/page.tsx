@@ -4,15 +4,15 @@ import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight, MapPin } from "lucide-react";
 import { isLocale, t, locales, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
-import { destinations, getDestination } from "@/lib/destinations";
-import { getAllCircuits } from "@/lib/data";
+import { getAllCircuits, getAllDestinations, getDestinationBySlug } from "@/lib/data";
 import CircuitCard from "@/components/CircuitCard";
 import Reveal from "@/components/Reveal";
 
 export const revalidate = 30;
 export const dynamicParams = true;
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const destinations = await getAllDestinations();
   return locales.flatMap((lang) => destinations.map((d) => ({ lang, slug: d.slug })));
 }
 
@@ -23,7 +23,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang, slug } = await params;
   const locale: Locale = isLocale(lang) ? lang : "en";
-  const d = getDestination(slug);
+  const d = await getDestinationBySlug(slug);
   if (!d) return {};
   return { title: t(d.title, locale), description: t(d.excerpt, locale) };
 }
@@ -38,7 +38,7 @@ export default async function DestinationDetailPage({
   const locale = lang as Locale;
   const dict = getDictionary(locale);
   const dp = dict.destinationsPage;
-  const d = getDestination(slug);
+  const d = await getDestinationBySlug(slug);
   if (!d) notFound();
 
   const allCircuits = await getAllCircuits();

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { isLocale, t, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
-import { destinations } from "@/lib/destinations";
+import { getAllDestinations } from "@/lib/data";
 import Reveal from "@/components/Reveal";
 
 export const revalidate = 30;
@@ -29,6 +29,7 @@ export default async function DestinationsPage({
   const locale = lang as Locale;
   const dict = getDictionary(locale);
   const dp = dict.destinationsPage;
+  const destinations = await getAllDestinations();
 
   return (
     <div className="pb-24">
