@@ -8,14 +8,11 @@ import { updateSession } from "./lib/supabase/middleware";
 // ============================================================================
 
 function detectLocale(request: NextRequest): string {
+  // Anglais par défaut. On ne suit que le choix explicite de l'utilisateur
+  // (cookie NEXT_LOCALE, posé lorsqu'il bascule la langue), pas la langue du
+  // navigateur — le site est donc "anglais first".
   const cookie = request.cookies.get("NEXT_LOCALE")?.value;
   if (cookie && (locales as readonly string[]).includes(cookie)) return cookie;
-
-  const accept = request.headers.get("accept-language") ?? "";
-  const preferred = accept.split(",")[0]?.split("-")[0]?.toLowerCase();
-  if (preferred && (locales as readonly string[]).includes(preferred)) {
-    return preferred;
-  }
   return defaultLocale;
 }
 

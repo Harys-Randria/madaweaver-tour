@@ -93,6 +93,9 @@ export default function Header({ lang, dict }: { lang: Locale; dict: Dictionary 
 
           <Link
             href={otherPath}
+            onClick={() => {
+              document.cookie = `NEXT_LOCALE=${other};path=/;max-age=31536000;samesite=lax`;
+            }}
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors ${iconBtn}`}
             aria-label={`Switch language to ${other.toUpperCase()}`}
           >
