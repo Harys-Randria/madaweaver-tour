@@ -28,18 +28,22 @@ export default function Footer({ lang, dict }: { lang: Locale; dict: Dictionary 
   const links = [
     { href: `/${lang}`, label: dict.nav.home },
     { href: `/${lang}/circuits`, label: dict.nav.circuits },
+    { href: `/${lang}/destinations`, label: dict.nav.destinations },
     { href: `/${lang}/gallery`, label: dict.nav.gallery },
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/contact`, label: dict.nav.contact },
   ];
 
   return (
-    <footer className="bg-charcoal text-cream/80">
-      <div className="container-x grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr] md:gap-14">
+    <footer className="grain relative overflow-hidden border-t-4 border-baobab bg-cocoa text-cream/80">
+      <div className="container-x relative z-10 grid gap-10 py-16 md:grid-cols-[1.4fr_1fr_1fr] md:gap-14">
         {/* Marque */}
         <div className="max-w-sm">
           <Logo className="[&_span]:text-cream" />
-          <p className="mt-4 text-sm leading-relaxed text-cream/55">{dict.footer.aboutText}</p>
+          <p className="mt-5 font-display text-lg italic leading-snug text-cream/90">
+            {site.tagline[lang]}
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-cream/55">{dict.footer.aboutText}</p>
           <div className="mt-5 flex gap-2.5">
             {SOCIALS.map((s) => (
               <a
@@ -89,7 +93,7 @@ export default function Footer({ lang, dict }: { lang: Locale; dict: Dictionary 
         </div>
       </div>
 
-      <div className="border-t border-cream/10">
+      <div className="relative z-10 border-t border-cream/10">
         <div className="container-x flex flex-col items-center justify-between gap-2 py-5 text-xs text-cream/45 sm:flex-row">
           <p>© {year} {site.name}. {dict.footer.rights}</p>
           <p>{dict.footer.madeWith}</p>

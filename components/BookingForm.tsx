@@ -9,10 +9,24 @@ type Booking = Dictionary["booking"];
 
 export default function BookingForm({
   circuitTitle,
+  circuitUrl,
+  durationDays,
+  priceFrom,
+  priceEstimated,
+  daysLabel,
+  fromLabel,
+  perPersonLabel,
   b,
   lang,
 }: {
   circuitTitle: string;
+  circuitUrl?: string;
+  durationDays?: number;
+  priceFrom?: number;
+  priceEstimated?: boolean;
+  daysLabel?: string;
+  fromLabel?: string;
+  perPersonLabel?: string;
   b: Booking;
   lang: "en" | "fr";
 }) {
@@ -35,12 +49,23 @@ export default function BookingForm({
 
   const buildMessage = () => {
     const L = lang === "fr";
+    // Métadonnées du circuit (durée · prix)
+    const meta: string[] = [];
+    if (durationDays) meta.push(`${durationDays} ${daysLabel ?? (L ? "jours" : "days")}`);
+    if (priceFrom)
+      meta.push(
+        `${fromLabel ?? (L ? "dès" : "from")} ${priceEstimated ? "≈ " : ""}€${priceFrom} ${
+          perPersonLabel ?? (L ? "/ pers." : "/ person")
+        }`,
+      );
+    const metaStr = meta.length ? ` (${meta.join(" · ")})` : "";
     const lines = [
       L ? `Bonjour Madaweaver Tour,` : `Hello Madaweaver Tour,`,
       "",
       L
-        ? `Je souhaite réserver le circuit : ${circuitTitle}.`
-        : `I'd like to book the tour: ${circuitTitle}.`,
+        ? `Je souhaite réserver le circuit : ${circuitTitle}${metaStr}.`
+        : `I'd like to book the tour: ${circuitTitle}${metaStr}.`,
+      ...(circuitUrl ? [L ? `Fiche : ${circuitUrl}` : `Tour page: ${circuitUrl}`] : []),
       "",
       `${L ? "Nom" : "Name"}: ${form.name || "—"}`,
       `Email: ${form.email || "—"}`,

@@ -12,7 +12,7 @@ import { notFound } from "next/navigation";
 const display = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display-src",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   style: ["normal", "italic"],
   display: "swap",
 });

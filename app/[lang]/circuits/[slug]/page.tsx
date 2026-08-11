@@ -25,7 +25,7 @@ import {
   circuitGalleryTones,
 } from "@/lib/circuits";
 import { getAllCircuits, getCircuitBySlug } from "@/lib/data";
-import { whatsappLink } from "@/lib/site";
+import { site, whatsappLink } from "@/lib/site";
 
 export const revalidate = 30;
 export const dynamicParams = true;
@@ -157,7 +157,13 @@ export default async function CircuitDetailPage({
         </div>
 
         <div className="mt-4">
-          <UtilityBar lang={locale} dict={dict} scrollTarget="#itinerary" />
+          <UtilityBar
+            lang={locale}
+            dict={dict}
+            scrollTarget="#itinerary"
+            galleryHref="#gallery"
+            videosHref="#gallery"
+          />
         </div>
       </section>
 
@@ -264,10 +270,15 @@ export default async function CircuitDetailPage({
               <div className="flex items-baseline gap-1.5">
                 <span className="text-sm text-ink-soft">{dict.card.from}</span>
                 <span className="font-display text-4xl font-semibold text-baobab">
-                  €{circuit.priceFrom}
+                  {circuit.priceEstimated ? "≈ " : ""}€{circuit.priceFrom}
                 </span>
                 <span className="text-sm text-ink-soft">{dict.card.perPerson}</span>
               </div>
+              {circuit.priceEstimated && (
+                <p className="mt-1.5 text-xs text-ink-soft">
+                  {locale === "fr" ? "Estimation · prix exact sur devis" : "Estimated · exact price on request"}
+                </p>
+              )}
 
               <dl className="mt-5 space-y-3 border-t border-sand-200 pt-5 text-sm">
                 <div className="flex items-center justify-between">
@@ -302,7 +313,7 @@ export default async function CircuitDetailPage({
       </div>
 
       {/* ============================================== PRATIQUE & GALERIE */}
-      <section className="container-x mt-20">
+      <section id="gallery" className="container-x mt-20 scroll-mt-24">
         <h2 className="font-display text-3xl font-semibold text-ink">{d.practicalGallery}</h2>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -336,7 +347,18 @@ export default async function CircuitDetailPage({
       {/* ============================================== RÉSERVATION */}
       <section id="booking" className="container-x mt-20 scroll-mt-24">
         <div className="mx-auto max-w-2xl rounded-2xl bg-paper p-7 shadow-sm ring-1 ring-ink/8 sm:p-9">
-          <BookingForm circuitTitle={t(circuit.title, locale)} b={dict.booking} lang={locale} />
+          <BookingForm
+            circuitTitle={t(circuit.title, locale)}
+            circuitUrl={`${site.url}/${locale}/circuits/${circuit.slug}`}
+            durationDays={circuit.durationDays}
+            priceFrom={circuit.priceFrom}
+            priceEstimated={circuit.priceEstimated}
+            daysLabel={dict.card.days}
+            fromLabel={dict.card.from}
+            perPersonLabel={dict.card.perPerson}
+            b={dict.booking}
+            lang={locale}
+          />
         </div>
       </section>
 

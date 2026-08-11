@@ -9,12 +9,12 @@ const ICONS = [ShieldCheck, BadgeCheck, Wallet, Headset];
 
 export default function Reassurance({ dict }: { dict: Dictionary }) {
   return (
-    <section className="bg-cream-2 py-16 sm:py-20">
-      <div className="container-x">
+    <section className="grain lamba-surface relative overflow-hidden bg-forest text-cream">
+      <div className="container-x relative z-10 py-16 sm:py-20">
         <Reveal>
           <div className="flex items-center justify-center gap-3">
             <span className="lamba-mark" />
-            <h2 className="text-center font-display text-2xl font-semibold text-ink sm:text-3xl">
+            <h2 className="text-center font-display text-3xl font-semibold sm:text-4xl">
               {dict.reassurance.title}
             </h2>
             <span className="lamba-mark" />
@@ -25,13 +25,13 @@ export default function Reassurance({ dict }: { dict: Dictionary }) {
             const Icon = ICONS[i];
             return (
               <Reveal key={item.title} delay={i * 0.06} as="div">
-                <div className="flex h-full items-start gap-4 rounded-2xl bg-paper p-5 shadow-sm ring-1 ring-ink/8">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-jungle/10 text-jungle">
+                <div className="flex h-full items-start gap-4 rounded-2xl bg-white/[0.06] p-5 ring-1 ring-white/10 backdrop-blur-sm transition-colors hover:bg-white/[0.1]">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold ring-1 ring-gold/25">
                     <Icon size={20} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-ink">{item.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-ink-soft">{item.text}</p>
+                    <h3 className="font-semibold text-cream">{item.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-cream/70">{item.text}</p>
                   </div>
                 </div>
               </Reveal>

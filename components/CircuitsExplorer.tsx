@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SlidersHorizontal, RotateCcw } from "lucide-react";
-import type { Circuit, Category } from "@/lib/circuits";
+import type { Circuit, Category, MacroRegion } from "@/lib/circuits";
 import { CATEGORIES } from "@/lib/circuits";
 import { t, type Locale } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/dictionaries";
@@ -24,10 +24,19 @@ export default function CircuitsExplorer({
   const [category, setCategory] = useState<Category | "all">("all");
   const [duration, setDuration] = useState<Duration>("any");
   const [sort, setSort] = useState<Sort>("featured");
+  const [region, setRegion] = useState<MacroRegion | "all">("all");
+
+  // Lit ?region= depuis l'URL après le montage (évite tout décalage d'hydratation).
+  useEffect(() => {
+    const r = new URLSearchParams(window.location.search).get("region");
+    const valid: MacroRegion[] = ["north", "highlands", "west", "east", "south"];
+    if (r && (valid as string[]).includes(r)) setRegion(r as MacroRegion);
+  }, []);
 
   const filtered = useMemo(() => {
     let list = circuits.filter((c) => {
       if (category !== "all" && c.category !== category) return false;
+      if (region !== "all" && !(c.macroRegions ?? []).includes(region)) return false;
       if (duration === "short" && c.durationDays > 5) return false;
       if (duration === "medium" && (c.durationDays < 6 || c.durationDays > 9)) return false;
       if (duration === "long" && c.durationDays < 10) return false;
@@ -47,12 +56,13 @@ export default function CircuitsExplorer({
       }
     });
     return list;
-  }, [circuits, category, duration, sort]);
+  }, [circuits, category, region, duration, sort]);
 
   const reset = () => {
     setCategory("all");
     setDuration("any");
     setSort("featured");
+    setRegion("all");
   };
 
   const chip = (active: boolean) =>
@@ -67,6 +77,22 @@ export default function CircuitsExplorer({
 
   return (
     <div>
+      {/* Bandeau région active (venant de la carte interactive) */}
+      {region !== "all" && (
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-2xl bg-baobab/10 px-4 py-3 text-sm">
+          <span className="font-semibold text-baobab">
+            {lang === "fr" ? "Région" : "Region"} : {dict.landing.regions[region]}
+          </span>
+          <button
+            onClick={() => setRegion("all")}
+            className="ml-auto inline-flex items-center gap-1.5 font-medium text-ink-soft hover:text-baobab"
+          >
+            <RotateCcw size={14} />
+            {cp.reset}
+          </button>
+        </div>
+      )}
+
       {/* Barre de filtres */}
       <div className="rounded-3xl bg-sand-100 p-5 sm:p-6">
         <div className="flex items-center gap-2 text-sm font-semibold text-ink">

@@ -10,15 +10,21 @@ export default function UtilityBar({
   lang,
   dict,
   scrollTarget = "#content",
+  galleryHref,
+  videosHref,
 }: {
   lang: Locale;
   dict: Dictionary;
   scrollTarget?: string;
+  /** Surcharge le lien « galerie » (ex. "#gallery" sur une fiche circuit). */
+  galleryHref?: string;
+  /** Surcharge le lien « vidéos ». */
+  videosHref?: string;
 }) {
   const u = dict.landing.utility;
   const links = [
-    { label: u.gallery, href: `/${lang}/gallery` },
-    { label: u.videos, href: `/${lang}/gallery#videos` },
+    { label: u.gallery, href: galleryHref ?? `/${lang}/gallery` },
+    { label: u.videos, href: videosHref ?? `/${lang}/gallery#videos` },
     { label: u.explore, href: `/${lang}/circuits` },
     { label: u.book, href: `/${lang}/contact` },
   ];

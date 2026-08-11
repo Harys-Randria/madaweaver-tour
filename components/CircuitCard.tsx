@@ -19,22 +19,27 @@ export default function CircuitCard({
   return (
     <Link
       href={`/${lang}/circuits/${circuit.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-ink/8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/10 hover:ring-baobab/30"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-ink/8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-ink/10 hover:ring-baobab/30"
     >
-      <div className="relative aspect-16/10 overflow-hidden">
+      <div className="relative aspect-4/3 overflow-hidden">
         {circuit.gallery?.[0] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={circuit.gallery[0]}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.07]"
           />
         ) : (
           <Scenery
             tone={circuit.tone}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.07]"
           />
         )}
+
+        {/* Voile pour la lisibilité des badges */}
+        <div className="absolute inset-0 bg-linear-to-t from-black/45 via-transparent to-black/15" />
 
         {/* Badge catégorie (haut-gauche) */}
         <span className="absolute left-2.5 top-2.5 inline-flex items-center rounded-full bg-baobab px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
@@ -68,7 +73,7 @@ export default function CircuitCard({
           <div className="flex items-baseline gap-1">
             <span className="text-xs text-ink-soft">{dict.card.from}</span>
             <span className="font-display text-xl font-semibold text-baobab">
-              €{circuit.priceFrom}
+              {circuit.priceEstimated ? "≈ " : ""}€{circuit.priceFrom}
             </span>
             <span className="text-xs text-ink-soft">{dict.card.perPerson}</span>
           </div>
