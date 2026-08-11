@@ -50,6 +50,20 @@ drop policy if exists "Auth delete media" on storage.objects;
 create policy "Auth delete media"
   on storage.objects for delete to authenticated using (bucket_id = 'media');
 
+-- 3) Réglages du site (coordonnées, réseaux, marque) — une seule ligne (id='site')
+create table if not exists public.settings (
+  id text primary key default 'site',
+  content jsonb not null,
+  updated_at timestamptz not null default now()
+);
+alter table public.settings enable row level security;
+drop policy if exists "Public read settings" on public.settings;
+create policy "Public read settings"
+  on public.settings for select using (true);
+drop policy if exists "Auth write settings" on public.settings;
+create policy "Auth write settings"
+  on public.settings for all to authenticated using (true) with check (true);
+
 -- ============================================================================
 --  Ensuite : Dashboard → Authentication → Users → « Add user » pour créer le
 --  compte (email + mot de passe) de la personne qui administrera le site.

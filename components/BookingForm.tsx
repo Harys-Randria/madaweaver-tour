@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageCircle, Mail } from "lucide-react";
 import { whatsappLink, mailtoLink } from "@/lib/site";
+import { useSettings } from "./SettingsProvider";
 import type { Dictionary } from "@/lib/dictionaries";
 
 type Booking = Dictionary["booking"];
@@ -78,9 +79,10 @@ export default function BookingForm({
     return lines.join("\n");
   };
 
-  const openWhatsapp = () => window.open(whatsappLink(buildMessage()), "_blank");
+  const s = useSettings();
+  const openWhatsapp = () => window.open(whatsappLink(s.contact.whatsapp, buildMessage()), "_blank");
   const openEmail = () => {
-    window.location.href = mailtoLink(subject, buildMessage());
+    window.location.href = mailtoLink(s.contact.email, subject, buildMessage());
   };
 
   const inputClass =

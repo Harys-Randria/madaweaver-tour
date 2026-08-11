@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, Star, MessageCircle, BadgeCheck } from "lucide-react";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
-import { getFeatured, getAllCircuits } from "@/lib/data";
+import { getFeatured, getAllCircuits, getSettings } from "@/lib/data";
 import { whatsappLink } from "@/lib/site";
 
 export const revalidate = 30;
@@ -27,6 +27,8 @@ export default async function HomePage({
   const dict = getDictionary(locale);
   const l = dict.landing;
   const featured = await getFeatured();
+
+  const settings = await getSettings();
 
   // Nombre de circuits par grande région (pour la carte interactive).
   const allCircuits = await getAllCircuits();
@@ -286,7 +288,7 @@ export default async function HomePage({
                 {dict.ctaBand.subtitle}
               </p>
               <a
-                href={whatsappLink()}
+                href={whatsappLink(settings.contact.whatsapp)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mx-auto mt-6 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"

@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { MessageCircle, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 import { isLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
-import { site, whatsappLink, mailtoLink } from "@/lib/site";
+import { whatsappLink, mailtoLink } from "@/lib/site";
+import { getSettings } from "@/lib/data";
 import ContactForm from "@/components/ContactForm";
 import Reveal from "@/components/Reveal";
 
@@ -28,9 +29,10 @@ export default async function ContactPage({
   const locale = lang as Locale;
   const dict = getDictionary(locale);
   const c = dict.contactPage;
+  const settings = await getSettings();
 
   const offices = [
-    { name: c.contactTana, detail: "Antananarivo · " + site.contact.email },
+    { name: c.contactTana, detail: "Antananarivo · " + settings.contact.email },
     { name: c.contactSud, detail: locale === "fr" ? "Tuléar · Isalo · RN7" : "Tuléar · Isalo · RN7" },
     { name: c.contactEst, detail: locale === "fr" ? "Andasibe · Sainte-Marie" : "Andasibe · Sainte-Marie" },
   ];
@@ -57,7 +59,7 @@ export default async function ContactPage({
                   <p className="text-xs font-semibold uppercase tracking-wider text-ink-soft">
                     {c.addressTitle}
                   </p>
-                  <p className="mt-1 text-ink">{site.contact.address}</p>
+                  <p className="mt-1 text-ink">{settings.contact.address}</p>
                 </div>
               </li>
               <li className="flex gap-4">
@@ -66,8 +68,8 @@ export default async function ContactPage({
                   <p className="text-xs font-semibold uppercase tracking-wider text-ink-soft">
                     {c.phoneTitle}
                   </p>
-                  <a href={whatsappLink()} className="mt-1 block text-ink hover:text-baobab">
-                    {site.contact.phoneDisplay}
+                  <a href={whatsappLink(settings.contact.whatsapp)} className="mt-1 block text-ink hover:text-baobab">
+                    {settings.contact.phoneDisplay}
                   </a>
                 </div>
               </li>
@@ -77,15 +79,15 @@ export default async function ContactPage({
                   <p className="text-xs font-semibold uppercase tracking-wider text-ink-soft">
                     {c.emailTitle}
                   </p>
-                  <a href={mailtoLink()} className="mt-1 block break-all text-ink hover:text-baobab">
-                    {site.contact.email}
+                  <a href={mailtoLink(settings.contact.email)} className="mt-1 block break-all text-ink hover:text-baobab">
+                    {settings.contact.email}
                   </a>
                 </div>
               </li>
             </ul>
 
             <a
-              href={whatsappLink()}
+              href={whatsappLink(settings.contact.whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-5 py-3 text-sm font-semibold text-white transition hover:brightness-95"

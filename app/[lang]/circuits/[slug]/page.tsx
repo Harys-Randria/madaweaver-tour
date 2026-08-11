@@ -24,8 +24,8 @@ import {
   DIFFICULTY_LABEL,
   circuitGalleryTones,
 } from "@/lib/circuits";
-import { getAllCircuits, getCircuitBySlug } from "@/lib/data";
-import { site, whatsappLink } from "@/lib/site";
+import { getAllCircuits, getCircuitBySlug, getSettings } from "@/lib/data";
+import { whatsappLink } from "@/lib/site";
 
 export const revalidate = 30;
 export const dynamicParams = true;
@@ -67,6 +67,7 @@ export default async function CircuitDetailPage({
   const circuit = await getCircuitBySlug(slug);
   if (!circuit) notFound();
 
+  const settings = await getSettings();
   const d = dict.detail;
   const allCircuits = await getAllCircuits();
   const related = allCircuits
@@ -359,7 +360,7 @@ export default async function CircuitDetailPage({
         <div className="mx-auto max-w-2xl rounded-2xl bg-paper p-7 shadow-sm ring-1 ring-ink/8 sm:p-9">
           <BookingForm
             circuitTitle={t(circuit.title, locale)}
-            circuitUrl={`${site.url}/${locale}/circuits/${circuit.slug}`}
+            circuitUrl={`${settings.url}/${locale}/circuits/${circuit.slug}`}
             durationDays={circuit.durationDays}
             priceFrom={circuit.priceFrom}
             priceEstimated={circuit.priceEstimated}
@@ -388,7 +389,7 @@ export default async function CircuitDetailPage({
               {d.quoteButton}
             </Link>
             <a
-              href={whatsappLink()}
+              href={whatsappLink(settings.contact.whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 text-sm font-semibold text-white transition hover:brightness-95"

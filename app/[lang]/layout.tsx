@@ -3,10 +3,11 @@ import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "../globals.css";
 import { locales, isLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
-import { site } from "@/lib/site";
+import { getSettings } from "@/lib/data";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
+import { SettingsProvider } from "@/components/SettingsProvider";
 import { notFound } from "next/navigation";
 
 const display = Playfair_Display({
@@ -35,19 +36,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   const locale: Locale = isLocale(lang) ? lang : "en";
+  const s = await getSettings();
   return {
-    metadataBase: new URL(site.url),
+    metadataBase: new URL(s.url),
     title: {
-      default: `${site.name} — ${site.tagline[locale]}`,
-      template: `%s · ${site.name}`,
+      default: `${s.name} — ${s.tagline[locale]}`,
+      template: `%s · ${s.name}`,
     },
-    description: site.description[locale],
+    description: s.description[locale],
     alternates: {
       languages: { en: "/en", fr: "/fr" },
     },
     openGraph: {
-      title: `${site.name} — ${site.tagline[locale]}`,
-      description: site.description[locale],
+      title: `${s.name} — ${s.tagline[locale]}`,
+      description: s.description[locale],
       type: "website",
       locale: locale === "fr" ? "fr_MG" : "en_US",
     },
@@ -65,14 +67,17 @@ export default async function LangLayout({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
+  const settings = await getSettings();
 
   return (
     <html lang={lang} className={`${display.variable} ${body.variable}`}>
       <body className="min-h-dvh flex flex-col bg-cream text-ink">
-        <Header lang={lang} dict={dict} />
-        <main className="flex-1">{children}</main>
-        <Footer lang={lang} dict={dict} />
-        <WhatsAppFloat />
+        <SettingsProvider settings={settings}>
+          <Header lang={lang} dict={dict} />
+          <main className="flex-1">{children}</main>
+          <Footer lang={lang} dict={dict} settings={settings} />
+          <WhatsAppFloat />
+        </SettingsProvider>
       </body>
     </html>
   );

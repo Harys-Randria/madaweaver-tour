@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { whatsappLink, mailtoLink } from "@/lib/site";
+import { useSettings } from "./SettingsProvider";
 import type { Dictionary } from "@/lib/dictionaries";
 
 export default function ContactForm({
@@ -16,6 +17,7 @@ export default function ContactForm({
 }) {
   const c = dict.contactPage;
   const b = dict.booking;
+  const s = useSettings();
   const [form, setForm] = useState({ name: "", email: "", travelType: "", message: "" });
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -39,8 +41,8 @@ export default function ContactForm({
     : lang === "fr"
     ? "Demande d'information"
     : "General enquiry";
-  const openWhatsapp = () => window.open(whatsappLink(build()), "_blank");
-  const openEmail = () => (window.location.href = mailtoLink(subject, build()));
+  const openWhatsapp = () => window.open(whatsappLink(s.contact.whatsapp, build()), "_blank");
+  const openEmail = () => (window.location.href = mailtoLink(s.contact.email, subject, build()));
 
   const field =
     "w-full rounded-none border-0 border-b border-sand-300 bg-transparent px-0 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-soft/60 focus:border-baobab";

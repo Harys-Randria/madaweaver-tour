@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { supabaseConfig, isSupabaseConfigured } from "./supabase/config";
 import { circuits as seedCircuits, type Circuit } from "./circuits";
+import { site, type SiteSettings } from "./site";
 
 // ============================================================================
 //  COUCHE DE DONNÉES (lecture publique)
@@ -37,4 +38,34 @@ export async function getCircuitBySlug(slug: string): Promise<Circuit | undefine
 
 export async function getFeatured(): Promise<Circuit[]> {
   return (await getAllCircuits()).filter((c) => c.featured);
+}
+
+// ---------------------------------------------------------------------------
+//  Réglages du site (coordonnées, réseaux…) — table `settings`, id fixe "site".
+//  Repli sur les valeurs par défaut de lib/site.ts. Fusion profonde pour
+//  qu'un contenu partiel en base ne casse rien.
+// ---------------------------------------------------------------------------
+export async function getSettings(): Promise<SiteSettings> {
+  const defaults = site as unknown as SiteSettings;
+  if (!isSupabaseConfigured()) return defaults;
+  try {
+    const supabase = publicClient();
+    const { data, error } = await supabase
+      .from("settings")
+      .select("content")
+      .eq("id", "site")
+      .maybeSingle();
+    if (error || !data?.content) return defaults;
+    const c = data.content as Partial<SiteSettings>;
+    return {
+      ...defaults,
+      ...c,
+      tagline: { ...defaults.tagline, ...c.tagline },
+      description: { ...defaults.description, ...c.description },
+      contact: { ...defaults.contact, ...c.contact },
+      social: { ...defaults.social, ...c.social },
+    };
+  } catch {
+    return defaults;
+  }
 }

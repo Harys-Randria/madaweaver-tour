@@ -6,7 +6,7 @@ import { CATEGORIES, circuitGalleryTones } from "@/lib/circuits";
 import { t, type Locale } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/dictionaries";
 import type { VideoItem } from "@/lib/site";
-import { site } from "@/lib/site";
+import { useSettings } from "./SettingsProvider";
 import MediaGallery, { type MediaItem } from "./MediaGallery";
 
 function YoutubeIcon({ size = 20 }: { size?: number }) {
@@ -29,6 +29,7 @@ export default function GalleryView({
   dict: Dictionary;
 }) {
   const g = dict.gallery;
+  const s = useSettings();
   const [category, setCategory] = useState<Category | "all">("all");
   const labels = { close: g.close, prev: g.prev, next: g.next, play: g.play };
 
@@ -122,7 +123,7 @@ export default function GalleryView({
             <h3 className="mt-4 font-display text-xl font-semibold text-ink">{g.comingSoon}</h3>
             <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">{g.comingSoonText}</p>
             <a
-              href={site.social.youtube}
+              href={s.social.youtube}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 rounded-full bg-baobab px-6 py-3 text-sm font-semibold text-white transition hover:bg-baobab-dark"

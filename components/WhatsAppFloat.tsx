@@ -1,10 +1,14 @@
+"use client";
+
 import { whatsappLink } from "@/lib/site";
+import { useSettings } from "./SettingsProvider";
 
 // Bouton WhatsApp flottant, présent sur toutes les pages. 100% gratuit (wa.me).
 export default function WhatsAppFloat() {
+  const s = useSettings();
   return (
     <a
-      href={whatsappLink()}
+      href={whatsappLink(s.contact.whatsapp)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp"

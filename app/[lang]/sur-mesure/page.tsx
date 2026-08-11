@@ -4,6 +4,7 @@ import { MessageSquare, PenLine, RefreshCw, Plane, MessageCircle } from "lucide-
 import { isLocale, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
 import { whatsappLink } from "@/lib/site";
+import { getSettings } from "@/lib/data";
 import Reveal from "@/components/Reveal";
 import TripDesignForm from "@/components/TripDesignForm";
 
@@ -29,6 +30,7 @@ export default async function TailorMadePage({
   const locale = lang as Locale;
   const dict = getDictionary(locale);
   const tm = dict.tailorMade;
+  const settings = await getSettings();
 
   return (
     <div className="pb-24">
@@ -86,7 +88,7 @@ export default async function TailorMadePage({
               <h2 className="mt-5 font-display text-3xl font-semibold text-ink">{tm.eyebrow}</h2>
               <p className="mt-3 max-w-md leading-relaxed text-ink-soft">{tm.subtitle}</p>
               <a
-                href={whatsappLink()}
+                href={whatsappLink(settings.contact.whatsapp)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"

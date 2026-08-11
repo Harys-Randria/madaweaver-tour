@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MessageCircle, Send } from "lucide-react";
 import { whatsappLink, mailtoLink } from "@/lib/site";
+import { useSettings } from "./SettingsProvider";
 import type { Dictionary } from "@/lib/dictionaries";
 
 // Formulaire « voyage sur-mesure » — récapitule les envies du voyageur dans un
@@ -53,8 +54,9 @@ export default function TripDesignForm({
   };
 
   const subject = lang === "fr" ? "Voyage sur-mesure" : "Tailor-made trip";
-  const openWhatsapp = () => window.open(whatsappLink(build()), "_blank");
-  const openEmail = () => (window.location.href = mailtoLink(subject, build()));
+  const s = useSettings();
+  const openWhatsapp = () => window.open(whatsappLink(s.contact.whatsapp, build()), "_blank");
+  const openEmail = () => (window.location.href = mailtoLink(s.contact.email, subject, build()));
 
   const field =
     "w-full rounded-lg border border-sand-300 bg-paper px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-soft/60 focus:border-baobab focus:ring-2 focus:ring-baobab/20";

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { circuits as seedCircuits, type Circuit } from "@/lib/circuits";
+import type { SiteSettings } from "@/lib/site";
 import { locales } from "@/lib/i18n";
 
 type Result = { ok: true } | { ok: false; error: string };
@@ -47,6 +48,17 @@ export async function deleteCircuit(id: string, slug: string): Promise<Result> {
   const { error } = await supabase.from("circuits").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
   revalidateAll(slug);
+  return { ok: true };
+}
+
+export async function saveSettings(content: SiteSettings): Promise<Result> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("settings")
+    .upsert({ id: "site", content, updated_at: new Date().toISOString() });
+  if (error) return { ok: false, error: error.message };
+  // Les réglages (footer, contact…) sont sur toutes les pages → on régénère tout.
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 

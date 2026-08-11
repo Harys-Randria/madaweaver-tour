@@ -1,8 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowDown } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/dictionaries";
-import { site } from "@/lib/site";
+import { useSettings } from "./SettingsProvider";
 
 // Bandeau sombre signature sous le héros : indicateur de défilement + liens
 // rapides + réseaux + contact. Reproduit la maquette Madaweaver.
@@ -21,6 +23,7 @@ export default function UtilityBar({
   /** Surcharge le lien « vidéos ». */
   videosHref?: string;
 }) {
+  const s = useSettings();
   const u = dict.landing.utility;
   const links = [
     { label: u.gallery, href: galleryHref ?? `/${lang}/gallery` },
@@ -53,16 +56,11 @@ export default function UtilityBar({
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 text-xs font-semibold uppercase tracking-widest text-cream/50 md:flex">
-          <a href={site.social.instagram} className="hover:text-white">ig</a>
-          <a href={site.social.facebook} className="hover:text-white">fb</a>
-        </div>
-
         <div className="ml-auto hidden text-right text-xs leading-snug text-cream/60 sm:block">
-          <a href={`mailto:${site.contact.email}`} className="block hover:text-white">
-            {site.contact.email}
+          <a href={`mailto:${s.contact.email}`} className="block hover:text-white">
+            {s.contact.email}
           </a>
-          <span>{site.contact.phoneDisplay}</span>
+          <span>{s.contact.phoneDisplay}</span>
         </div>
       </div>
     </div>

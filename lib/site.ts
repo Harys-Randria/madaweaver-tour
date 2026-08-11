@@ -2,8 +2,18 @@ import type { L } from "./i18n";
 
 // ============================================================================
 //  CONFIGURATION GLOBALE DU SITE — Madaweaver Tour
-//  👉 Modifiez ici vos coordonnées : elles se propagent sur tout le site.
+//  👉 Valeurs par défaut. Si Supabase est configuré, elles sont surchargées
+//     par la table `settings` (éditable depuis /admin/settings).
 // ============================================================================
+
+export type SiteSettings = {
+  name: string;
+  url: string;
+  tagline: L;
+  description: L;
+  contact: { whatsapp: string; phoneDisplay: string; email: string; address: string };
+  social: { facebook: string; instagram: string; tripadvisor: string; youtube: string };
+};
 
 export const site = {
   name: "Madaweaver Tour",
@@ -53,16 +63,16 @@ export const videos: VideoItem[] = [
 ];
 
 /** Construit un lien WhatsApp "cliquer pour discuter" avec message pré-rempli. */
-export function whatsappLink(message?: string): string {
-  const base = `https://wa.me/${site.contact.whatsapp}`;
+export function whatsappLink(whatsapp: string, message?: string): string {
+  const base = `https://wa.me/${whatsapp}`;
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
 /** Construit un lien mailto avec sujet + corps pré-remplis. */
-export function mailtoLink(subject?: string, body?: string): string {
+export function mailtoLink(email: string, subject?: string, body?: string): string {
   const params = new URLSearchParams();
   if (subject) params.set("subject", subject);
   if (body) params.set("body", body);
   const query = params.toString();
-  return `mailto:${site.contact.email}${query ? `?${query}` : ""}`;
+  return `mailto:${email}${query ? `?${query}` : ""}`;
 }
