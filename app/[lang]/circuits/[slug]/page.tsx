@@ -30,7 +30,6 @@ import { site, whatsappLink } from "@/lib/site";
 export const revalidate = 30;
 export const dynamicParams = true;
 import Scenery from "@/components/Scenery";
-import WovenArt from "@/components/WovenArt";
 import BookingForm from "@/components/BookingForm";
 import CircuitCard from "@/components/CircuitCard";
 import UtilityBar from "@/components/UtilityBar";
@@ -307,7 +306,18 @@ export default async function CircuitDetailPage({
           </div>
 
           <div className="mt-5 aspect-4/5 overflow-hidden rounded-2xl shadow-md">
-            <WovenArt className="h-full w-full object-cover" />
+            {circuit.gallery?.[1] ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={circuit.gallery[1]}
+                alt={t(circuit.title, locale)}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Scenery tone={circuit.tone} className="h-full w-full object-cover" />
+            )}
           </div>
         </aside>
       </div>
