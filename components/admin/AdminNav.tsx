@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Map, Compass, Images, Settings, ExternalLink, LogOut } from "lucide-react";
+import { Map, Compass, Quote, Images, Settings, ExternalLink, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import Logo from "@/components/Logo";
 
@@ -13,6 +13,7 @@ export default function AdminNav({ email }: { email: string }) {
   const links = [
     { href: "/admin", label: "Circuits", icon: Map, exact: true },
     { href: "/admin/destinations", label: "Destinations", icon: Compass, exact: false },
+    { href: "/admin/testimonials", label: "Témoignages", icon: Quote, exact: false },
     { href: "/admin/media", label: "Images", icon: Images, exact: false },
     { href: "/admin/settings", label: "Réglages", icon: Settings, exact: false },
   ];

@@ -83,6 +83,23 @@ drop policy if exists "Auth write destinations" on public.destinations;
 create policy "Auth write destinations"
   on public.destinations for all to authenticated using (true) with check (true);
 
+-- 5) Témoignages (avis clients) — sort + contenu bilingue
+create table if not exists public.testimonials (
+  id uuid primary key default gen_random_uuid(),
+  sort int not null default 0,
+  content jsonb not null,            -- { quote:{en,fr}, author, origin:{en,fr} }
+  updated_at timestamptz not null default now()
+);
+alter table public.testimonials enable row level security;
+
+drop policy if exists "Public read testimonials" on public.testimonials;
+create policy "Public read testimonials"
+  on public.testimonials for select using (true);
+
+drop policy if exists "Auth write testimonials" on public.testimonials;
+create policy "Auth write testimonials"
+  on public.testimonials for all to authenticated using (true) with check (true);
+
 -- ============================================================================
 --  Ensuite : Dashboard → Authentication → Users → « Add user » pour créer le
 --  compte (email + mot de passe) de la personne qui administrera le site.

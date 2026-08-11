@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { supabaseConfig, isSupabaseConfigured } from "./supabase/config";
 import { circuits as seedCircuits, type Circuit } from "./circuits";
 import { destinations as seedDestinations, type Destination } from "./destinations";
+import { testimonials as seedTestimonials, type Testimonial } from "./testimonials";
 import { site, type SiteSettings } from "./site";
 
 // ============================================================================
@@ -65,6 +66,24 @@ export async function getDestinationBySlug(slug: string): Promise<Destination | 
 }
 
 // ---------------------------------------------------------------------------
+//  Témoignages — table `testimonials`. Repli sur lib/testimonials.ts.
+// ---------------------------------------------------------------------------
+export async function getTestimonials(): Promise<Testimonial[]> {
+  if (!isSupabaseConfigured()) return seedTestimonials;
+  try {
+    const supabase = publicClient();
+    const { data, error } = await supabase
+      .from("testimonials")
+      .select("content, sort")
+      .order("sort", { ascending: true });
+    if (error || !data || data.length === 0) return seedTestimonials;
+    return data.map((row) => row.content as Testimonial);
+  } catch {
+    return seedTestimonials;
+  }
+}
+
+// ---------------------------------------------------------------------------
 //  Réglages du site (coordonnées, réseaux…) — table `settings`, id fixe "site".
 //  Repli sur les valeurs par défaut de lib/site.ts. Fusion profonde pour
 //  qu'un contenu partiel en base ne casse rien.
@@ -88,6 +107,10 @@ export async function getSettings(): Promise<SiteSettings> {
       description: { ...defaults.description, ...c.description },
       contact: { ...defaults.contact, ...c.contact },
       social: { ...defaults.social, ...c.social },
+      reviews: {
+        rating: { ...defaults.reviews.rating, ...c.reviews?.rating },
+        count: { ...defaults.reviews.count, ...c.reviews?.count },
+      },
     };
   } catch {
     return defaults;

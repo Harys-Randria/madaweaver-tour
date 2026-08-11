@@ -56,6 +56,8 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
   const loc = (field: "tagline" | "description", lang: "en" | "fr") => (v: string) =>
     setS((p) => ({ ...p, [field]: { ...p[field], [lang]: v } }));
   const field = (k: "name" | "url") => (v: string) => setS((p) => ({ ...p, [k]: v }));
+  const reviews = (k: "rating" | "count", lang: "en" | "fr") => (v: string) =>
+    setS((p) => ({ ...p, reviews: { ...p.reviews, [k]: { ...p.reviews[k], [lang]: v } } }));
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -126,6 +128,35 @@ export default function SettingsForm({ initial }: { initial: SiteSettings }) {
             rows={2}
             value={s.description.fr}
             onChange={(e) => loc("description", "fr")(e.target.value)}
+          />
+        </div>
+      </Section>
+
+      <Section title="Avis clients (note affichée sur l'accueil)">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Note (EN)"
+            value={s.reviews.rating.en}
+            onChange={reviews("rating", "en")}
+            placeholder="4.9/5"
+          />
+          <Field
+            label="Note (FR)"
+            value={s.reviews.rating.fr}
+            onChange={reviews("rating", "fr")}
+            placeholder="4,9/5"
+          />
+          <Field
+            label="Nombre d'avis (EN)"
+            value={s.reviews.count.en}
+            onChange={reviews("count", "en")}
+            placeholder="based on 180+ reviews"
+          />
+          <Field
+            label="Nombre d'avis (FR)"
+            value={s.reviews.count.fr}
+            onChange={reviews("count", "fr")}
+            placeholder="sur 180+ avis"
           />
         </div>
       </Section>

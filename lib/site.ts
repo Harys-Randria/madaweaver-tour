@@ -13,6 +13,7 @@ export type SiteSettings = {
   description: L;
   contact: { whatsapp: string; phoneDisplay: string; email: string; address: string };
   social: { facebook: string; instagram: string; tripadvisor: string; youtube: string };
+  reviews: { rating: L; count: L };
 };
 
 export const site = {
@@ -45,6 +46,12 @@ export const site = {
     instagram: "#",
     tripadvisor: "#",
     youtube: "#",
+  },
+
+  // Note globale affichée au-dessus des témoignages
+  reviews: {
+    rating: { en: "4.9/5", fr: "4,9/5" } satisfies L,
+    count: { en: "based on 180+ reviews", fr: "sur 180+ avis" } satisfies L,
   },
 } as const;
 

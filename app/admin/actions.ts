@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { circuits as seedCircuits, type Circuit } from "@/lib/circuits";
 import { destinations as destinationSeed, type Destination } from "@/lib/destinations";
+import { testimonials as testimonialSeed, type Testimonial } from "@/lib/testimonials";
 import type { SiteSettings } from "@/lib/site";
 import { locales } from "@/lib/i18n";
 
@@ -112,6 +113,57 @@ export async function seedDestinations(): Promise<Result> {
   const { error } = await supabase.from("destinations").insert(rows);
   if (error) return { ok: false, error: error.message };
   revalidateDestinations();
+  return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+//  Témoignages
+// ---------------------------------------------------------------------------
+function revalidateHome() {
+  for (const l of locales) revalidatePath(`/${l}`);
+}
+
+export async function saveTestimonial(input: {
+  id?: string;
+  sort: number;
+  content: Testimonial;
+}): Promise<Result> {
+  const supabase = await createClient();
+  const row = {
+    sort: input.sort,
+    content: input.content,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = input.id
+    ? await supabase.from("testimonials").update(row).eq("id", input.id)
+    : await supabase.from("testimonials").insert(row);
+
+  if (error) return { ok: false, error: error.message };
+  revalidateHome();
+  return { ok: true };
+}
+
+export async function deleteTestimonial(id: string): Promise<Result> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("testimonials").delete().eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidateHome();
+  return { ok: true };
+}
+
+export async function seedTestimonialsDemo(): Promise<Result> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("testimonials")
+    .select("*", { count: "exact", head: true });
+  if (count && count > 0)
+    return { ok: false, error: "La base contient déjà des témoignages." };
+
+  const rows = testimonialSeed.map((tm, i) => ({ sort: i, content: tm }));
+  const { error } = await supabase.from("testimonials").insert(rows);
+  if (error) return { ok: false, error: error.message };
+  revalidateHome();
   return { ok: true };
 }
 

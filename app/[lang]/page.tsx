@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Star, MessageCircle, BadgeCheck } from "lucide-react";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { isLocale, t, type Locale } from "@/lib/i18n";
 import { getDictionary } from "@/lib/dictionaries";
-import { getFeatured, getAllCircuits, getSettings } from "@/lib/data";
+import { getFeatured, getAllCircuits, getSettings, getTestimonials } from "@/lib/data";
 import { whatsappLink } from "@/lib/site";
 
 export const revalidate = 30;
@@ -29,6 +29,7 @@ export default async function HomePage({
   const featured = await getFeatured();
 
   const settings = await getSettings();
+  const testimonials = await getTestimonials();
 
   // Nombre de circuits par grande région (pour la carte interactive).
   const allCircuits = await getAllCircuits();
@@ -222,16 +223,16 @@ export default async function HomePage({
                 </div>
                 <div className="leading-tight">
                   <div className="font-display text-2xl font-semibold text-ink">
-                    {dict.testimonials.rating}
+                    {t(settings.reviews.rating, locale)}
                   </div>
-                  <div className="text-xs text-ink-soft">{dict.testimonials.count}</div>
+                  <div className="text-xs text-ink-soft">{t(settings.reviews.count, locale)}</div>
                 </div>
               </div>
             </div>
           </Reveal>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {dict.testimonials.items.map((tm, i) => (
-              <Reveal key={tm.author} delay={i * 0.1} as="div">
+            {testimonials.map((tm, i) => (
+              <Reveal key={`${tm.author}-${i}`} delay={i * 0.1} as="div">
                 <figure className="lamba-top relative flex h-full flex-col rounded-2xl bg-paper p-7 pt-8 shadow-sm ring-1 ring-ink/8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
                   <span className="pointer-events-none absolute right-5 top-4 select-none font-display text-7xl leading-none text-baobab/10">
                     ”
@@ -242,14 +243,14 @@ export default async function HomePage({
                     ))}
                   </div>
                   <blockquote className="mt-4 flex-1 font-display text-lg italic leading-relaxed text-ink">
-                    “{tm.quote}”
+                    “{t(tm.quote, locale)}”
                   </blockquote>
                   <figcaption className="mt-5 flex items-center gap-3">
                     <Monogram name={tm.author} size={42} />
                     <div>
                       <p className="text-sm font-semibold text-ink">
                         {tm.author}
-                        <span className="ml-1 font-normal text-ink-soft">· {tm.origin}</span>
+                        <span className="ml-1 font-normal text-ink-soft">· {t(tm.origin, locale)}</span>
                       </p>
                       <p className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-jungle">
                         <BadgeCheck size={13} />
