@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
 import { SettingsProvider } from "@/components/SettingsProvider";
+import { Analytics } from "@vercel/analytics/next";
 import { notFound } from "next/navigation";
 
 const display = Playfair_Display({
@@ -51,7 +52,14 @@ export async function generateMetadata({
       title: `${s.name} — ${s.tagline[locale]}`,
       description: s.description[locale],
       type: "website",
+      siteName: s.name,
+      url: `${s.url}/${locale}`,
       locale: locale === "fr" ? "fr_MG" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${s.name} — ${s.tagline[locale]}`,
+      description: s.description[locale],
     },
     icons: { icon: "/favicon.ico" },
   };
@@ -69,15 +77,38 @@ export default async function LangLayout({
   const dict = getDictionary(lang);
   const settings = await getSettings();
 
+  // Données structurées (JSON-LD) — aide Google à comprendre l'agence.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    name: settings.name,
+    url: `${settings.url}/${lang}`,
+    description: settings.description[lang],
+    email: settings.contact.email,
+    telephone: settings.contact.phoneDisplay,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: settings.contact.address,
+      addressCountry: "MG",
+    },
+    areaServed: { "@type": "Country", name: "Madagascar" },
+    sameAs: Object.values(settings.social).filter((u) => u && u !== "#"),
+  };
+
   return (
     <html lang={lang} className={`${display.variable} ${body.variable}`}>
       <body className="min-h-dvh flex flex-col bg-cream text-ink">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <SettingsProvider settings={settings}>
           <Header lang={lang} dict={dict} />
           <main className="flex-1">{children}</main>
           <Footer lang={lang} dict={dict} settings={settings} />
           <WhatsAppFloat />
         </SettingsProvider>
+        <Analytics />
       </body>
     </html>
   );

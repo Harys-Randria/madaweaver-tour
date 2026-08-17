@@ -28,7 +28,12 @@ export default function Footer({
   dict: Dictionary;
   settings: SiteSettings;
 }) {
-  const year = 2024;
+  const year = new Date().getFullYear();
+  const legalLinks = [
+    { href: `/${lang}/legal/mentions-legales`, label: lang === "fr" ? "Mentions légales" : "Legal notice" },
+    { href: `/${lang}/legal/confidentialite`, label: lang === "fr" ? "Confidentialité" : "Privacy" },
+    { href: `/${lang}/legal/cookies`, label: "Cookies" },
+  ];
   const links = [
     { href: `/${lang}`, label: dict.nav.home },
     { href: `/${lang}/circuits`, label: dict.nav.circuits },
@@ -104,8 +109,15 @@ export default function Footer({
       </div>
 
       <div className="relative z-10 border-t border-cream/10">
-        <div className="container-x flex flex-col items-center justify-between gap-2 py-5 text-xs text-cream/45 sm:flex-row">
+        <div className="container-x flex flex-col items-center justify-between gap-3 py-5 text-xs text-cream/45 sm:flex-row">
           <p>© {year} {settings.name}. {dict.footer.rights}</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+            {legalLinks.map((l) => (
+              <Link key={l.href} href={l.href} className="transition-colors hover:text-baobab-light">
+                {l.label}
+              </Link>
+            ))}
+          </div>
           <p>{dict.footer.madeWith}</p>
         </div>
       </div>
