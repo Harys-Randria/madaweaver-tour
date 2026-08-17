@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { MessageCircle } from "lucide-react";
 import { whatsappLink, mailtoLink } from "@/lib/site";
+import { sendContactEmail } from "@/app/actions/contact";
 import { useSettings } from "./SettingsProvider";
 import type { Dictionary } from "@/lib/dictionaries";
 
@@ -44,6 +45,27 @@ export default function ContactForm({
   const openWhatsapp = () => window.open(whatsappLink(s.contact.whatsapp, build()), "_blank");
   const openEmail = () => (window.location.href = mailtoLink(s.contact.email, subject, build()));
 
+  const [pending, startSend] = useTransition();
+  const [sent, setSent] = useState(false);
+
+  // Envoi serveur (Resend). Si non configuré ou en cas d'échec, on retombe sur
+  // l'ouverture du client mail (mailto) : aucun lead perdu.
+  const handleSubmit = () =>
+    startSend(async () => {
+      const res = await sendContactEmail({
+        name: form.name,
+        email: form.email,
+        subject,
+        message: build(),
+      });
+      if (res.ok) {
+        setSent(true);
+        setForm({ name: "", email: "", travelType: "", message: "" });
+      } else {
+        openEmail();
+      }
+    });
+
   const field =
     "w-full rounded-none border-0 border-b border-sand-300 bg-transparent px-0 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-soft/60 focus:border-baobab";
   const label = "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-soft";
@@ -55,7 +77,7 @@ export default function ContactForm({
         className="mt-6 space-y-5"
         onSubmit={(e) => {
           e.preventDefault();
-          openEmail();
+          handleSubmit();
         }}
       >
         <div>
@@ -88,10 +110,18 @@ export default function ContactForm({
 
         <button
           type="submit"
-          className="w-full rounded-lg bg-baobab px-5 py-3.5 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-baobab-dark"
+          disabled={pending}
+          className="w-full rounded-lg bg-baobab px-5 py-3.5 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-baobab-dark disabled:opacity-60"
         >
-          {c.send}
+          {pending ? (lang === "fr" ? "Envoi…" : "Sending…") : c.send}
         </button>
+        {sent && (
+          <p className="rounded-lg bg-jungle/10 px-4 py-3 text-center text-sm font-medium text-jungle">
+            {lang === "fr"
+              ? "Message envoyé ✓ Nous vous répondrons rapidement."
+              : "Message sent ✓ We'll get back to you shortly."}
+          </p>
+        )}
         <button
           type="button"
           onClick={openWhatsapp}
