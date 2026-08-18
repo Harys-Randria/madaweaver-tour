@@ -19,6 +19,9 @@ export interface ItineraryStep {
   day: L;
   title: L;
   description: L;
+  // Coordonnées optionnelles pour la carte interactive (lignes entre étapes).
+  lat?: number;
+  lng?: number;
 }
 
 export interface Circuit {

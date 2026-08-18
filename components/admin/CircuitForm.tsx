@@ -86,6 +86,13 @@ export default function CircuitForm({
     });
   const removeStep = (i: number) =>
     setC((p) => ({ ...p, itinerary: p.itinerary.filter((_, j) => j !== i) }));
+  const setStepCoord = (i: number, f: "lat" | "lng", v: string) =>
+    setC((p) => {
+      const it = [...p.itinerary];
+      const n = v.trim() === "" ? undefined : Number(v);
+      it[i] = { ...it[i], [f]: n !== undefined && Number.isFinite(n) ? n : undefined };
+      return { ...p, itinerary: it };
+    });
 
   const addImage = (url: string) =>
     setC((p) => ({ ...p, gallery: [...(p.gallery ?? []), url] }));
@@ -273,7 +280,13 @@ export default function CircuitForm({
                 <Input value={step.title.en} onChange={(v) => setStep(i, "title", "en", v)} placeholder="Title (EN)" />
                 <Textarea value={step.description.fr} onChange={(v) => setStep(i, "description", "fr", v)} placeholder="Description (FR)" />
                 <Textarea value={step.description.en} onChange={(v) => setStep(i, "description", "en", v)} placeholder="Description (EN)" />
+                <Input type="number" value={step.lat?.toString() ?? ""} onChange={(v) => setStepCoord(i, "lat", v)} placeholder="Latitude — ex. -18.9333" />
+                <Input type="number" value={step.lng?.toString() ?? ""} onChange={(v) => setStepCoord(i, "lng", v)} placeholder="Longitude — ex. 47.5167" />
               </div>
+              <p className="mt-2 text-xs text-ink-soft">
+                Coordonnées (facultatif) pour la carte du parcours. Astuce : sur Google Maps,
+                clic droit sur le lieu → cliquez les chiffres pour les copier (latitude, longitude).
+              </p>
             </div>
           ))}
           <button

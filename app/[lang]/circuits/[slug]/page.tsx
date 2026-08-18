@@ -35,6 +35,7 @@ import CircuitCard from "@/components/CircuitCard";
 import UtilityBar from "@/components/UtilityBar";
 import Reveal from "@/components/Reveal";
 import MediaGallery, { type MediaItem } from "@/components/MediaGallery";
+import CircuitMap from "@/components/CircuitMap";
 
 const STEP_ICONS = [MapPin, Mountain, Trees, Waves, Landmark, Compass, Users];
 
@@ -69,6 +70,10 @@ export default async function CircuitDetailPage({
 
   const settings = await getSettings();
   const d = dict.detail;
+  // Points de la carte : étapes de l'itinéraire ayant des coordonnées.
+  const mapPoints = circuit.itinerary
+    .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
+    .map((s) => ({ lat: s.lat as number, lng: s.lng as number, label: t(s.title, locale) }));
   const allCircuits = await getAllCircuits();
   const related = allCircuits
     .filter((c) => c.slug !== circuit.slug && c.category === circuit.category)
@@ -230,6 +235,25 @@ export default async function CircuitDetailPage({
               </ol>
             </div>
           </Reveal>
+
+          {/* Carte du parcours (affichée seulement si des étapes ont des coordonnées) */}
+          {mapPoints.length > 0 && (
+            <Reveal>
+              <div className="mt-12">
+                <h2 className="font-display text-3xl font-semibold text-ink">
+                  {locale === "fr" ? "Carte du parcours" : "Route map"}
+                </h2>
+                <p className="mt-1 text-sm text-ink-soft">
+                  {locale === "fr"
+                    ? "Les étapes du circuit, dans l'ordre."
+                    : "The tour stops, in order."}
+                </p>
+                <div className="mt-6">
+                  <CircuitMap points={mapPoints} />
+                </div>
+              </div>
+            </Reveal>
+          )}
 
           {/* Inclus / non inclus */}
           <Reveal>
