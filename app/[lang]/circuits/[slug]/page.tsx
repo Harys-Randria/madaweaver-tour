@@ -70,10 +70,16 @@ export default async function CircuitDetailPage({
 
   const settings = await getSettings();
   const d = dict.detail;
-  // Points de la carte : étapes de l'itinéraire ayant des coordonnées.
+  // Points de la carte : tous les points de toutes les étapes, dans l'ordre.
   const mapPoints = circuit.itinerary
-    .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
-    .map((s) => ({ lat: s.lat as number, lng: s.lng as number, label: t(s.title, locale) }));
+    .flatMap((s) =>
+      (s.waypoints ?? []).map((w) => ({
+        lat: w.lat,
+        lng: w.lng,
+        label: w.name || t(s.title, locale),
+      })),
+    )
+    .filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng));
   const allCircuits = await getAllCircuits();
   const related = allCircuits
     .filter((c) => c.slug !== circuit.slug && c.category === circuit.category)

@@ -86,11 +86,24 @@ export default function CircuitForm({
     });
   const removeStep = (i: number) =>
     setC((p) => ({ ...p, itinerary: p.itinerary.filter((_, j) => j !== i) }));
-  const setStepCoord = (i: number, f: "lat" | "lng", v: string) =>
+  const addWaypoint = (i: number) =>
     setC((p) => {
       const it = [...p.itinerary];
-      const n = v.trim() === "" ? undefined : Number(v);
-      it[i] = { ...it[i], [f]: n !== undefined && Number.isFinite(n) ? n : undefined };
+      it[i] = { ...it[i], waypoints: [...(it[i].waypoints ?? []), { name: "", lat: NaN, lng: NaN }] };
+      return { ...p, itinerary: it };
+    });
+  const setWaypoint = (i: number, j: number, f: "name" | "lat" | "lng", v: string) =>
+    setC((p) => {
+      const it = [...p.itinerary];
+      const wps = [...(it[i].waypoints ?? [])];
+      wps[j] = f === "name" ? { ...wps[j], name: v } : { ...wps[j], [f]: v.trim() === "" ? NaN : Number(v) };
+      it[i] = { ...it[i], waypoints: wps };
+      return { ...p, itinerary: it };
+    });
+  const removeWaypoint = (i: number, j: number) =>
+    setC((p) => {
+      const it = [...p.itinerary];
+      it[i] = { ...it[i], waypoints: (it[i].waypoints ?? []).filter((_, k) => k !== j) };
       return { ...p, itinerary: it };
     });
 
@@ -123,9 +136,14 @@ export default function CircuitForm({
       highlights: { en: clean(c.highlights.en), fr: clean(c.highlights.fr) },
       included: { en: clean(c.included.en), fr: clean(c.included.fr) },
       notIncluded: { en: clean(c.notIncluded.en), fr: clean(c.notIncluded.fr) },
-      itinerary: c.itinerary.filter(
-        (s) => s.title.en || s.title.fr || s.description.en || s.description.fr,
-      ),
+      itinerary: c.itinerary
+        .map((s) => {
+          const wps = (s.waypoints ?? [])
+            .filter((w) => Number.isFinite(w.lat) && Number.isFinite(w.lng))
+            .map((w) => ({ ...w, name: w.name?.trim() || undefined }));
+          return { ...s, waypoints: wps.length ? wps : undefined };
+        })
+        .filter((s) => s.title.en || s.title.fr || s.description.en || s.description.fr),
       gallery: (c.gallery ?? []).filter(Boolean),
       videos: (c.videos ?? []).map((v) => v.trim()).filter(Boolean),
     };
@@ -280,13 +298,59 @@ export default function CircuitForm({
                 <Input value={step.title.en} onChange={(v) => setStep(i, "title", "en", v)} placeholder="Title (EN)" />
                 <Textarea value={step.description.fr} onChange={(v) => setStep(i, "description", "fr", v)} placeholder="Description (FR)" />
                 <Textarea value={step.description.en} onChange={(v) => setStep(i, "description", "en", v)} placeholder="Description (EN)" />
-                <Input type="number" value={step.lat?.toString() ?? ""} onChange={(v) => setStepCoord(i, "lat", v)} placeholder="Latitude — ex. -18.9333" />
-                <Input type="number" value={step.lng?.toString() ?? ""} onChange={(v) => setStepCoord(i, "lng", v)} placeholder="Longitude — ex. 47.5167" />
               </div>
-              <p className="mt-2 text-xs text-ink-soft">
-                Coordonnées (facultatif) pour la carte du parcours. Astuce : sur Google Maps,
-                clic droit sur le lieu → cliquez les chiffres pour les copier (latitude, longitude).
-              </p>
+
+              {/* Points sur la carte (0, 1 ou plusieurs par étape) */}
+              <div className="mt-3 rounded-lg border border-sand-200 bg-paper/60 p-3">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-soft">
+                  Points sur la carte (facultatif)
+                </p>
+                <div className="space-y-2">
+                  {(step.waypoints ?? []).map((w, j) => (
+                    <div key={j} className="flex flex-wrap items-center gap-2">
+                      <input
+                        value={w.name ?? ""}
+                        onChange={(e) => setWaypoint(i, j, "name", e.target.value)}
+                        placeholder="Lieu (ex. Antananarivo)"
+                        className={`${wpInputClass} min-w-[150px] flex-1`}
+                      />
+                      <input
+                        type="number"
+                        value={Number.isFinite(w.lat) ? String(w.lat) : ""}
+                        onChange={(e) => setWaypoint(i, j, "lat", e.target.value)}
+                        placeholder="Latitude"
+                        className={`${wpInputClass} w-32`}
+                      />
+                      <input
+                        type="number"
+                        value={Number.isFinite(w.lng) ? String(w.lng) : ""}
+                        onChange={(e) => setWaypoint(i, j, "lng", e.target.value)}
+                        placeholder="Longitude"
+                        className={`${wpInputClass} w-32`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeWaypoint(i, j)}
+                        className="text-ink-soft hover:text-red-600"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addWaypoint(i)}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-sand-100 px-3 py-1.5 text-xs font-medium text-ink hover:bg-sand-200"
+                  >
+                    <Plus size={14} /> Ajouter un point
+                  </button>
+                </div>
+                <p className="mt-2 text-xs text-ink-soft">
+                  Une étape peut avoir plusieurs points (ex. Antananarivo → Andasibe = 2 points).
+                  Le trajet relie tous les points, dans l&apos;ordre. Astuce Google Maps : clic droit
+                  sur le lieu → cliquez les chiffres « latitude, longitude » pour les copier.
+                </p>
+              </div>
             </div>
           ))}
           <button
@@ -407,6 +471,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const inputClass =
   "w-full rounded-lg border border-sand-300 bg-cream/40 px-3 py-2 text-sm text-ink outline-none focus:border-baobab focus:ring-2 focus:ring-baobab/20";
+
+const wpInputClass =
+  "rounded-lg border border-sand-300 bg-cream/40 px-2.5 py-1.5 text-sm text-ink outline-none focus:border-baobab focus:ring-2 focus:ring-baobab/20";
 
 function Input({
   value,

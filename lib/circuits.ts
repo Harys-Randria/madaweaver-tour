@@ -15,13 +15,20 @@ export type Tone = "sunset" | "forest" | "canyon" | "ocean" | "highland";
 /** Grandes régions de l'île (carte interactive + filtre). */
 export type MacroRegion = "north" | "highlands" | "west" | "east" | "south";
 
+// Un point géographique de l'itinéraire (pour la carte du parcours).
+export interface Waypoint {
+  name?: string; // libellé du lieu, ex. "Antananarivo"
+  lat: number;
+  lng: number;
+}
+
 export interface ItineraryStep {
   day: L;
   title: L;
   description: L;
-  // Coordonnées optionnelles pour la carte interactive (lignes entre étapes).
-  lat?: number;
-  lng?: number;
+  // Une étape peut contenir plusieurs points (ex. Antananarivo → Andasibe = 2).
+  // Le trajet relie tous les points de toutes les étapes, dans l'ordre.
+  waypoints?: Waypoint[];
 }
 
 export interface Circuit {
