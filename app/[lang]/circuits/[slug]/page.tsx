@@ -251,8 +251,8 @@ export default async function CircuitDetailPage({
                 </h2>
                 <p className="mt-1 text-sm text-ink-soft">
                   {locale === "fr"
-                    ? "Les étapes du circuit, dans l'ordre."
-                    : "The tour stops, in order."}
+                    ? "Le trajet suit les routes ; les tronçons en pointillé sont des vols ou traversées."
+                    : "The route follows the roads; dashed sections are flights or crossings."}
                 </p>
                 <div className="mt-6">
                   <CircuitMap points={mapPoints} />

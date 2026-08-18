@@ -5,9 +5,30 @@ import "leaflet/dist/leaflet.css";
 
 export type MapPoint = { lat: number; lng: number; label: string };
 
-// Carte interactive gratuite (Leaflet + OpenStreetMap). Trace une ligne reliant
-// les étapes du circuit dans l'ordre. Leaflet est importé dynamiquement pour
-// n'être chargé que côté navigateur (il a besoin de `window`).
+type LatLng = [number, number];
+
+// Récupère le tracé routier réel entre deux points via OSRM (gratuit, sans clé).
+// Renvoie la géométrie qui suit les routes, ou null si aucun itinéraire routier
+// (ex. vol ou traversée maritime) → l'appelant tracera alors une ligne droite.
+async function fetchRoad(a: MapPoint, b: MapPoint): Promise<LatLng[] | null> {
+  try {
+    const url = `https://router.project-osrm.org/route/v1/driving/${a.lng},${a.lat};${b.lng},${b.lat}?overview=full&geometries=geojson`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const coords: [number, number][] | undefined = data?.routes?.[0]?.geometry?.coordinates;
+    if (data?.code === "Ok" && coords?.length) {
+      // GeoJSON = [lng, lat] → Leaflet = [lat, lng]
+      return coords.map(([lng, lat]) => [lat, lng] as LatLng);
+    }
+  } catch {
+    /* réseau indisponible → repli ligne droite */
+  }
+  return null;
+}
+
+// Carte interactive gratuite (Leaflet + OpenStreetMap). Le trajet suit les
+// routes réelles (OSRM) ; les tronçons non routiers (vols, mer) sont en
+// pointillé. Leaflet est importé dynamiquement (nécessite `window`).
 export default function CircuitMap({ points }: { points: MapPoint[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -20,19 +41,15 @@ export default function CircuitMap({ points }: { points: MapPoint[] }) {
       const L = (await import("leaflet")).default;
       if (cancelled || !containerRef.current) return;
 
-      map = L.map(containerRef.current, {
-        scrollWheelZoom: false,
-        attributionControl: true,
-      });
-
+      map = L.map(containerRef.current, { scrollWheelZoom: false });
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 18,
       }).addTo(map);
 
-      const latlngs = points.map((p) => [p.lat, p.lng] as [number, number]);
+      const wpLatLngs: LatLng[] = points.map((p) => [p.lat, p.lng]);
 
-      // Marqueurs numérotés (pas d'image → aucun souci de chargement d'icône).
+      // Marqueurs numérotés (vectoriels → aucun souci d'image).
       points.forEach((p, i) => {
         const icon = L.divIcon({
           className: "",
@@ -45,18 +62,37 @@ export default function CircuitMap({ points }: { points: MapPoint[] }) {
           .bindPopup(`<strong>${i + 1}.</strong> ${p.label}`);
       });
 
-      // Ligne du trajet (une seule étape = pas de ligne, juste le marqueur).
-      if (latlngs.length > 1) {
-        L.polyline(latlngs, {
-          color: "#c2622d",
-          weight: 3,
-          opacity: 0.9,
-          dashArray: "6 8",
-        }).addTo(map);
-        map.fitBounds(L.latLngBounds(latlngs), { padding: [40, 40] });
-      } else {
-        map.setView(latlngs[0], 9);
+      // Cadrage initial (avant que les routes arrivent).
+      if (wpLatLngs.length === 1) {
+        map.setView(wpLatLngs[0], 9);
+        return;
       }
+      map.fitBounds(L.latLngBounds(wpLatLngs), { padding: [40, 40] });
+
+      // Un tracé par segment consécutif (routier si possible, sinon pointillé).
+      const segments = points.slice(0, -1).map((a, i) => [a, points[i + 1]] as const);
+      const roads = await Promise.all(segments.map(([a, b]) => fetchRoad(a, b)));
+      if (cancelled || !map) return;
+
+      const allLatLngs: LatLng[] = [...wpLatLngs];
+      roads.forEach((road, i) => {
+        if (road) {
+          L.polyline(road, { color: "#c2622d", weight: 4, opacity: 0.9 }).addTo(map!);
+          allLatLngs.push(...road);
+        } else {
+          const [a, b] = segments[i];
+          L.polyline(
+            [
+              [a.lat, a.lng],
+              [b.lat, b.lng],
+            ],
+            { color: "#c2622d", weight: 2.5, opacity: 0.6, dashArray: "5 9" },
+          ).addTo(map!);
+        }
+      });
+
+      // Recadre pour englober les routes (elles peuvent sortir du cadre initial).
+      map.fitBounds(L.latLngBounds(allLatLngs), { padding: [40, 40] });
     })();
 
     return () => {
