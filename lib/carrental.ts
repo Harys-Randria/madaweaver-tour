@@ -12,8 +12,9 @@ export interface CarOption {
 export interface Vehicle {
   name: string;
   description: L;
-  priceNote?: L;
-  image?: string;
+  priceWithDriver?: string; // tarif journalier avec chauffeur (ex. "€90 / jour")
+  priceWithoutDriver?: string; // tarif journalier sans chauffeur
+  images: string[];
 }
 
 export interface CarRentalContent {
@@ -56,8 +57,9 @@ export const carRental: CarRentalContent = {
         en: "The reference for Madagascar's tracks — robust, comfortable, ideal for the RN7, Tsingy and remote routes.",
         fr: "La référence sur les pistes de Madagascar — robuste, confortable, idéal pour la RN7, les Tsingy et les routes reculées.",
       },
-      priceNote: { en: "On request", fr: "Sur demande" },
-      image: "",
+      priceWithDriver: "",
+      priceWithoutDriver: "",
+      images: [],
     },
     {
       name: "Minibus / Van",
@@ -65,8 +67,9 @@ export const carRental: CarRentalContent = {
         en: "Comfortable for families and small groups, with room for luggage.",
         fr: "Confortable pour les familles et petits groupes, avec de la place pour les bagages.",
       },
-      priceNote: { en: "On request", fr: "Sur demande" },
-      image: "",
+      priceWithDriver: "",
+      priceWithoutDriver: "",
+      images: [],
     },
   ],
   ctaTitle: { en: "Need a vehicle for your trip?", fr: "Besoin d'un véhicule pour votre voyage ?" },

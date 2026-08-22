@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Car, UserCheck, KeyRound, MessageCircle, ArrowRight } from "lucide-react";
+import { UserCheck, KeyRound, MessageCircle, ArrowRight } from "lucide-react";
 import { isLocale, t, type Locale } from "@/lib/i18n";
 import { getCarRental, getSettings } from "@/lib/data";
 import { whatsappLink } from "@/lib/site";
 import Scenery from "@/components/Scenery";
 import Reveal from "@/components/Reveal";
+import CarFleet from "@/components/CarFleet";
 
 export const revalidate = 30;
 
@@ -90,34 +91,24 @@ export default async function CarRentalPage({
                 {locale === "fr" ? "Notre flotte" : "Our fleet"}
               </h2>
             </Reveal>
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {c.vehicles.map((v, i) => (
-                <Reveal key={i} delay={i * 0.06} as="div">
-                  <div className="flex h-full flex-col overflow-hidden rounded-2xl bg-paper ring-1 ring-ink/8">
-                    <div className="relative aspect-4/3 overflow-hidden bg-sand-100">
-                      {v.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={v.image} alt={v.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-baobab/40">
-                          <Car size={48} />
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-1 flex-col p-5">
-                      <h3 className="font-display text-lg font-semibold text-ink">{v.name}</h3>
-                      <p className="mt-1.5 flex-1 text-sm leading-relaxed text-ink-soft">
-                        {t(v.description, locale)}
-                      </p>
-                      {v.priceNote && t(v.priceNote, locale) && (
-                        <p className="mt-3 inline-flex w-fit rounded-full bg-baobab/10 px-3 py-1 text-xs font-semibold text-baobab">
-                          {t(v.priceNote, locale)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
+            <div className="mt-12">
+              <CarFleet
+                vehicles={c.vehicles.map((v) => ({
+                  name: v.name,
+                  description: t(v.description, locale),
+                  priceWithDriver: v.priceWithDriver || undefined,
+                  priceWithoutDriver: v.priceWithoutDriver || undefined,
+                  images: v.images ?? [],
+                }))}
+                labels={{
+                  withDriver: locale === "fr" ? "Avec chauffeur / jour" : "With driver / day",
+                  withoutDriver: locale === "fr" ? "Sans chauffeur / jour" : "Without driver / day",
+                  photos: locale === "fr" ? "photos" : "photos",
+                  close: locale === "fr" ? "Fermer" : "Close",
+                  prev: locale === "fr" ? "Précédent" : "Previous",
+                  next: locale === "fr" ? "Suivant" : "Next",
+                }}
+              />
             </div>
           </div>
         </section>

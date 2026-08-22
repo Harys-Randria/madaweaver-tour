@@ -141,6 +141,42 @@ export function ImageField({
   );
 }
 
+export function GalleryField({
+  label,
+  hint,
+  images,
+  onChange,
+}: {
+  label: string;
+  hint?: string;
+  images: string[];
+  onChange: (next: string[]) => void;
+}) {
+  return (
+    <Field label={label}>
+      {hint && <p className="mb-2 -mt-0.5 text-xs text-ink-soft">{hint}</p>}
+      <div className="flex flex-wrap gap-3">
+        {images.map((url, i) => (
+          <div key={i} className="group relative h-24 w-32 overflow-hidden rounded-lg ring-1 ring-ink/10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt="" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onChange(images.filter((_, j) => j !== i))}
+              className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ))}
+        <div className="flex h-24 w-32 items-center justify-center rounded-lg border-2 border-dashed border-sand-300">
+          <ImageUploader onUploaded={(u) => onChange([...images, u])} label="Ajouter" />
+        </div>
+      </div>
+    </Field>
+  );
+}
+
 export function AddButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button

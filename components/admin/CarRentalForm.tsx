@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react";
 import type { CarRentalContent } from "@/lib/carrental";
 import type { L } from "@/lib/i18n";
 import { saveCarRental } from "@/app/admin/actions";
-import { Section, Field, Input, LocalizedText, ImageField, AddButton, SaveBar } from "./fields";
+import { Section, Field, Input, LocalizedText, ImageField, GalleryField, AddButton, SaveBar } from "./fields";
 
 type LocKey = "title" | "intro" | "ctaTitle" | "ctaText";
 
@@ -32,7 +32,10 @@ export default function CarRentalForm({ initial }: { initial: CarRentalContent }
   const addVehicle = () =>
     setC((p) => ({
       ...p,
-      vehicles: [...p.vehicles, { name: "", description: { en: "", fr: "" }, priceNote: { en: "", fr: "" }, image: "" }],
+      vehicles: [
+        ...p.vehicles,
+        { name: "", description: { en: "", fr: "" }, priceWithDriver: "", priceWithoutDriver: "", images: [] },
+      ],
     }));
   const setVehicleName = (i: number, v: string) =>
     setC((p) => {
@@ -40,16 +43,22 @@ export default function CarRentalForm({ initial }: { initial: CarRentalContent }
       vehicles[i] = { ...vehicles[i], name: v };
       return { ...p, vehicles };
     });
-  const setVehicleLoc = (i: number, f: "description" | "priceNote", lang: "en" | "fr", v: string) =>
+  const setVehicleDesc = (i: number, lang: "en" | "fr", v: string) =>
     setC((p) => {
       const vehicles = [...p.vehicles];
-      vehicles[i] = { ...vehicles[i], [f]: { ...(vehicles[i][f] as L), [lang]: v } };
+      vehicles[i] = { ...vehicles[i], description: { ...vehicles[i].description, [lang]: v } };
       return { ...p, vehicles };
     });
-  const setVehicleImage = (i: number, v: string) =>
+  const setVehiclePrice = (i: number, f: "priceWithDriver" | "priceWithoutDriver", v: string) =>
     setC((p) => {
       const vehicles = [...p.vehicles];
-      vehicles[i] = { ...vehicles[i], image: v };
+      vehicles[i] = { ...vehicles[i], [f]: v };
+      return { ...p, vehicles };
+    });
+  const setVehicleImages = (i: number, next: string[]) =>
+    setC((p) => {
+      const vehicles = [...p.vehicles];
+      vehicles[i] = { ...vehicles[i], images: next };
       return { ...p, vehicles };
     });
   const removeVehicle = (i: number) => setC((p) => ({ ...p, vehicles: p.vehicles.filter((_, j) => j !== i) }));
@@ -102,9 +111,21 @@ export default function CarRentalForm({ initial }: { initial: CarRentalContent }
               <Field label="Nom / modèle">
                 <Input value={v.name} onChange={(val) => setVehicleName(i, val)} placeholder="4×4 Toyota Land Cruiser" />
               </Field>
-              <LocalizedText label="Description" value={v.description} onChange={(l, val) => setVehicleLoc(i, "description", l, val)} textarea rows={2} />
-              <LocalizedText label="Tarif / note (facultatif)" value={v.priceNote ?? { en: "", fr: "" }} onChange={(l, val) => setVehicleLoc(i, "priceNote", l, val)} />
-              <ImageField label="Photo" url={v.image} onChange={(u) => setVehicleImage(i, u)} />
+              <LocalizedText label="Description" value={v.description} onChange={(l, val) => setVehicleDesc(i, l, val)} textarea rows={2} />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Tarif journalier AVEC chauffeur">
+                  <Input value={v.priceWithDriver ?? ""} onChange={(val) => setVehiclePrice(i, "priceWithDriver", val)} placeholder="ex. 90 € (le « / jour » est ajouté)" />
+                </Field>
+                <Field label="Tarif journalier SANS chauffeur">
+                  <Input value={v.priceWithoutDriver ?? ""} onChange={(val) => setVehiclePrice(i, "priceWithoutDriver", val)} placeholder="ex. 70 €" />
+                </Field>
+              </div>
+              <GalleryField
+                label="Photos du véhicule"
+                hint="Plusieurs photos possibles ; la 1re sert de couverture, le reste s'ouvre en visionneuse."
+                images={v.images ?? []}
+                onChange={(next) => setVehicleImages(i, next)}
+              />
             </div>
           ))}
           <AddButton onClick={addVehicle} label="Ajouter un véhicule" />
