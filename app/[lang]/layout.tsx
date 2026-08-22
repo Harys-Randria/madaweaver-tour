@@ -96,7 +96,7 @@ export default async function LangLayout({
   };
 
   return (
-    <html lang={lang} className={`${display.variable} ${body.variable}`}>
+    <html lang={lang} data-scroll-behavior="smooth" className={`${display.variable} ${body.variable}`}>
       <body className="min-h-dvh flex flex-col bg-cream text-ink">
         <script
           type="application/ld+json"

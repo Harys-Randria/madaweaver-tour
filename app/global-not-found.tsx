@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 // donc renvoyer un document HTML complet (<html> + <body>).
 export default function GlobalNotFound() {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className="min-h-dvh bg-cream text-ink antialiased">
         <main className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center px-6 text-center">
           <p className="text-6xl font-semibold tracking-tight text-baobab">404</p>
