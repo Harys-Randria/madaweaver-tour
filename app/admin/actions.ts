@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { circuits as seedCircuits, type Circuit } from "@/lib/circuits";
 import { destinations as destinationSeed, type Destination } from "@/lib/destinations";
 import { testimonials as testimonialSeed, type Testimonial } from "@/lib/testimonials";
+import type { AboutContent } from "@/lib/about";
+import type { CarRentalContent } from "@/lib/carrental";
 import type { SiteSettings } from "@/lib/site";
 import { locales } from "@/lib/i18n";
 
@@ -175,6 +177,26 @@ export async function saveSettings(content: SiteSettings): Promise<Result> {
   if (error) return { ok: false, error: error.message };
   // Les réglages (footer, contact…) sont sur toutes les pages → on régénère tout.
   revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function saveAbout(content: AboutContent): Promise<Result> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("settings")
+    .upsert({ id: "about", content, updated_at: new Date().toISOString() });
+  if (error) return { ok: false, error: error.message };
+  for (const l of locales) revalidatePath(`/${l}/about`);
+  return { ok: true };
+}
+
+export async function saveCarRental(content: CarRentalContent): Promise<Result> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("settings")
+    .upsert({ id: "carrental", content, updated_at: new Date().toISOString() });
+  if (error) return { ok: false, error: error.message };
+  for (const l of locales) revalidatePath(`/${l}/location`);
   return { ok: true };
 }
 

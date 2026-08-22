@@ -38,6 +38,7 @@ export default function Footer({
     { href: `/${lang}`, label: dict.nav.home },
     { href: `/${lang}/circuits`, label: dict.nav.circuits },
     { href: `/${lang}/destinations`, label: dict.nav.destinations },
+    { href: `/${lang}/location`, label: lang === "fr" ? "Location de voiture" : "Car rental" },
     { href: `/${lang}/gallery`, label: dict.nav.gallery },
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/contact`, label: dict.nav.contact },

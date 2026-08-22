@@ -3,6 +3,8 @@ import { supabaseConfig, isSupabaseConfigured } from "./supabase/config";
 import { circuits as seedCircuits, type Circuit } from "./circuits";
 import { destinations as seedDestinations, type Destination } from "./destinations";
 import { testimonials as seedTestimonials, type Testimonial } from "./testimonials";
+import { about as seedAbout, type AboutContent } from "./about";
+import { carRental as seedCarRental, type CarRentalContent } from "./carrental";
 import { site, type SiteSettings } from "./site";
 
 // ============================================================================
@@ -115,4 +117,31 @@ export async function getSettings(): Promise<SiteSettings> {
   } catch {
     return defaults;
   }
+}
+
+// ---------------------------------------------------------------------------
+//  Contenu « À propos » — table `settings`, id fixe "about". Repli sur lib/about.ts.
+// ---------------------------------------------------------------------------
+async function getSingleton<T>(id: string, fallback: T): Promise<T> {
+  if (!isSupabaseConfigured()) return fallback;
+  try {
+    const supabase = publicClient();
+    const { data, error } = await supabase
+      .from("settings")
+      .select("content")
+      .eq("id", id)
+      .maybeSingle();
+    if (error || !data?.content) return fallback;
+    return { ...fallback, ...(data.content as Partial<T>) };
+  } catch {
+    return fallback;
+  }
+}
+
+export function getAbout(): Promise<AboutContent> {
+  return getSingleton<AboutContent>("about", seedAbout);
+}
+
+export function getCarRental(): Promise<CarRentalContent> {
+  return getSingleton<CarRentalContent>("carrental", seedCarRental);
 }

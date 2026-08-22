@@ -25,6 +25,7 @@ export default function Header({ lang, dict }: { lang: Locale; dict: Dictionary 
   const links = [
     { href: `/${lang}/circuits`, label: dict.nav.circuits },
     { href: `/${lang}/destinations`, label: dict.nav.destinations },
+    { href: `/${lang}/location`, label: lang === "fr" ? "Location" : "Car rental" },
     { href: `/${lang}/gallery`, label: dict.nav.gallery },
     { href: `/${lang}/about`, label: dict.nav.about },
     { href: `/${lang}/contact`, label: dict.nav.contact },
