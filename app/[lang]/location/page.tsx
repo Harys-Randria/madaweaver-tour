@@ -93,6 +93,7 @@ export default async function CarRentalPage({
             </Reveal>
             <div className="mt-12">
               <CarFleet
+                lang={locale}
                 vehicles={c.vehicles.map((v) => ({
                   name: v.name,
                   description: t(v.description, locale),

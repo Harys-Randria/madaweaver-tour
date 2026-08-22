@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Car, X, ChevronLeft, ChevronRight, ImageIcon, UserCheck, KeyRound } from "lucide-react";
+import { Car, X, ChevronLeft, ChevronRight, ImageIcon, UserCheck, KeyRound, CalendarCheck } from "lucide-react";
+import CarBookingModal from "./CarBookingModal";
 
 export type FleetVehicle = {
   name: string;
@@ -23,12 +24,15 @@ export type FleetLabels = {
 export default function CarFleet({
   vehicles,
   labels,
+  lang,
 }: {
   vehicles: FleetVehicle[];
   labels: FleetLabels;
+  lang: "en" | "fr";
 }) {
   // { v: index véhicule, i: index photo } ou null
   const [open, setOpen] = useState<{ v: number; i: number } | null>(null);
+  const [booking, setBooking] = useState<string | null>(null);
   const current = open ? vehicles[open.v] : null;
 
   const close = useCallback(() => setOpen(null), []);
@@ -121,6 +125,14 @@ export default function CarFleet({
                     )}
                   </div>
                 )}
+                <button
+                  type="button"
+                  onClick={() => setBooking(v.name)}
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-baobab px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-baobab-dark"
+                >
+                  <CalendarCheck size={16} />
+                  {lang === "fr" ? "Réserver" : "Book"}
+                </button>
               </div>
             </div>
           );
@@ -172,6 +184,15 @@ export default function CarFleet({
             </figcaption>
           </figure>
         </div>
+      )}
+
+      {booking && (
+        <CarBookingModal
+          vehicles={vehicles.map((v) => v.name)}
+          initialVehicle={booking}
+          lang={lang}
+          onClose={() => setBooking(null)}
+        />
       )}
     </>
   );
