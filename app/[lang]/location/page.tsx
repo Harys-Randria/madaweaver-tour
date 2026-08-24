@@ -52,7 +52,7 @@ export default async function CarRentalPage({
           <div className="relative aspect-video overflow-hidden rounded-2xl shadow-lg ring-1 ring-ink/8">
             {c.heroImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={c.heroImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={c.heroImage} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
             ) : (
               <Scenery tone="canyon" rich className="absolute inset-0 h-full w-full object-cover" />
             )}

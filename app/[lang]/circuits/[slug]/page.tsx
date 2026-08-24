@@ -133,7 +133,7 @@ export default async function CircuitDetailPage({
         <div className="relative mt-4 flex min-h-80 items-end overflow-hidden rounded-2xl shadow-lg sm:min-h-104">
           {circuit.gallery?.[0] ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={circuit.gallery[0]} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={circuit.gallery[0]} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
           ) : (
             <Scenery tone={circuit.tone} rich className="absolute inset-0 h-full w-full object-cover" />
           )}

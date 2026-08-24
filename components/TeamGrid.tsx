@@ -42,7 +42,7 @@ export default function TeamGrid({
             <figure className="flex h-full flex-col items-center rounded-2xl bg-paper p-7 text-center shadow-sm ring-1 ring-ink/8">
               {m.photo ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={m.photo} alt={m.name} className="h-24 w-24 rounded-full object-cover" />
+                <img src={m.photo} alt={m.name} loading="lazy" decoding="async" className="h-24 w-24 rounded-full object-cover" />
               ) : (
                 <Monogram name={m.name} size={88} />
               )}

@@ -177,7 +177,7 @@ export default function CarFleet({
           <figure className="w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
             <div className="aspect-video overflow-hidden rounded-2xl bg-black shadow-2xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={current.images[open.i]} alt={current.name} className="h-full w-full object-contain" />
+              <img src={current.images[open.i]} alt={current.name} decoding="async" className="h-full w-full object-contain" />
             </div>
             <figcaption className="mt-3 text-center text-sm text-white/80">
               {current.name} · {open.i + 1}/{current.images.length}

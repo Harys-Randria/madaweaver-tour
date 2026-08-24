@@ -60,7 +60,7 @@ export default async function DestinationDetailPage({
 
         <div className="relative mt-4 flex min-h-80 items-end overflow-hidden rounded-2xl shadow-lg sm:min-h-104">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={d.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <img src={d.image} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/25 to-black/10" />
           <div className="relative p-6 text-white sm:p-10">
             <span className="inline-flex items-center gap-1 rounded-full bg-baobab px-3 py-1 text-xs font-semibold">
