@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "../globals.css";
 import { locales, isLocale, type Locale } from "@/lib/i18n";
@@ -109,6 +110,13 @@ export default async function LangLayout({
           <WhatsAppFloat />
         </SettingsProvider>
         <Analytics />
+        {/* Fairlytics — mesure d'audience sans cookie (RGPD-friendly) */}
+        <Script
+          id="fairlytics-id-ajcu6jd9k7ysd6"
+          src="https://app.fairlytics.tech/tag/tag.js"
+          data-fairlyticskey="51705a9a863cfe2fa3f8b8e21191ea7e"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
