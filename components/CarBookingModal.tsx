@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { X, MessageCircle, Mail } from "lucide-react";
 import { whatsappLink, mailtoLink } from "@/lib/site";
+import { sendContactEmail } from "@/app/actions/contact";
 import { useSettings } from "./SettingsProvider";
 
 // Formulaire de réservation dédié à la location de voiture. Pré-rempli avec le
@@ -73,6 +74,16 @@ export default function CarBookingModal({
 
   const openWhatsapp = () => window.open(whatsappLink(s.contact.whatsapp, build()), "_blank");
   const openEmail = () => (window.location.href = mailtoLink(s.contact.email, subject, build()));
+
+  const [pending, startSend] = useTransition();
+  const [sent, setSent] = useState(false);
+  // Envoi serveur (Resend). Repli sur mailto si non configuré ou en cas d'échec.
+  const handleEmail = () =>
+    startSend(async () => {
+      const res = await sendContactEmail({ name: form.name, email: form.email, subject, message: build() });
+      if (res.ok) setSent(true);
+      else openEmail();
+    });
 
   const field =
     "w-full rounded-lg border border-sand-300 bg-paper px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-soft/60 focus:border-baobab focus:ring-2 focus:ring-baobab/20";
@@ -159,23 +170,32 @@ export default function CarBookingModal({
             <textarea className={field} rows={2} value={form.message} onChange={set("message")} />
           </div>
 
-          <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-            <button
-              type="submit"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
-            >
-              <MessageCircle size={18} />
-              WhatsApp
-            </button>
-            <button
-              type="button"
-              onClick={openEmail}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-baobab px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-baobab-dark"
-            >
-              <Mail size={18} />
-              Email
-            </button>
-          </div>
+          {sent ? (
+            <p className="rounded-lg bg-jungle/10 px-4 py-3 text-center text-sm font-medium text-jungle">
+              {fr
+                ? "Demande envoyée ✓ Nous revenons vers vous rapidement."
+                : "Request sent ✓ We'll get back to you shortly."}
+            </p>
+          ) : (
+            <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+              <button
+                type="submit"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
+              >
+                <MessageCircle size={18} />
+                WhatsApp
+              </button>
+              <button
+                type="button"
+                onClick={handleEmail}
+                disabled={pending}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-baobab px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-baobab-dark disabled:opacity-60"
+              >
+                <Mail size={18} />
+                {pending ? (fr ? "Envoi…" : "Sending…") : "Email"}
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>
