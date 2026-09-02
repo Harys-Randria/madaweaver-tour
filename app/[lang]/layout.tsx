@@ -62,7 +62,6 @@ export async function generateMetadata({
       title: `${s.name} — ${s.tagline[locale]}`,
       description: s.description[locale],
     },
-    icons: { icon: "/favicon.ico" },
   };
 }
 
