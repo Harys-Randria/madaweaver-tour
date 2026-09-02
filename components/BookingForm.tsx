@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { MessageCircle, Mail } from "lucide-react";
 import { whatsappLink, mailtoLink } from "@/lib/site";
+import { sendContactEmail } from "@/app/actions/contact";
 import { useSettings } from "./SettingsProvider";
 import type { Dictionary } from "@/lib/dictionaries";
 
@@ -85,6 +86,16 @@ export default function BookingForm({
     window.location.href = mailtoLink(s.contact.email, subject, buildMessage());
   };
 
+  const [pending, startSend] = useTransition();
+  const [sent, setSent] = useState(false);
+  // Envoi serveur (Resend) ; repli mailto si non configuré ou en cas d'échec.
+  const handleEmail = () =>
+    startSend(async () => {
+      const res = await sendContactEmail({ name: form.name, email: form.email, subject, message: buildMessage() });
+      if (res.ok) setSent(true);
+      else openEmail();
+    });
+
   const inputClass =
     "w-full rounded-none border-0 border-b border-sand-300 bg-transparent px-0 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-soft/60 focus:border-baobab";
   const labelClass = "mb-1 block text-xs font-medium uppercase tracking-wider text-ink-soft";
@@ -146,23 +157,32 @@ export default function BookingForm({
           />
         </div>
 
-        <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-          <button
-            type="submit"
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
-          >
-            <MessageCircle size={18} />
-            {b.sendWhatsapp}
-          </button>
-          <button
-            type="button"
-            onClick={openEmail}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-baobab px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-baobab-dark"
-          >
-            <Mail size={18} />
-            {b.sendEmail}
-          </button>
-        </div>
+        {sent ? (
+          <p className="rounded-lg bg-jungle/10 px-4 py-3 text-center text-sm font-medium text-jungle">
+            {lang === "fr"
+              ? "Demande envoyée ✓ Nous revenons vers vous rapidement."
+              : "Request sent ✓ We'll get back to you shortly."}
+          </p>
+        ) : (
+          <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+            <button
+              type="submit"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95"
+            >
+              <MessageCircle size={18} />
+              {b.sendWhatsapp}
+            </button>
+            <button
+              type="button"
+              onClick={handleEmail}
+              disabled={pending}
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-baobab px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-baobab-dark disabled:opacity-60"
+            >
+              <Mail size={18} />
+              {pending ? (lang === "fr" ? "Envoi…" : "Sending…") : b.sendEmail}
+            </button>
+          </div>
+        )}
 
         <p className="text-center text-xs text-ink-soft">{b.note}</p>
       </form>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { MessageCircle, Send } from "lucide-react";
 import { whatsappLink, mailtoLink } from "@/lib/site";
+import { sendContactEmail } from "@/app/actions/contact";
 import { useSettings } from "./SettingsProvider";
 import type { Dictionary } from "@/lib/dictionaries";
 
@@ -58,6 +59,15 @@ export default function TripDesignForm({
   const openWhatsapp = () => window.open(whatsappLink(s.contact.whatsapp, build()), "_blank");
   const openEmail = () => (window.location.href = mailtoLink(s.contact.email, subject, build()));
 
+  const [pending, startSend] = useTransition();
+  const [sent, setSent] = useState(false);
+  const handleEmail = () =>
+    startSend(async () => {
+      const res = await sendContactEmail({ name: form.name, email: form.email, subject, message: build() });
+      if (res.ok) setSent(true);
+      else openEmail();
+    });
+
   const field =
     "w-full rounded-lg border border-sand-300 bg-paper px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-soft/60 focus:border-baobab focus:ring-2 focus:ring-baobab/20";
   const label = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-ink-soft";
@@ -74,7 +84,7 @@ export default function TripDesignForm({
         className="mt-6 space-y-5"
         onSubmit={(e) => {
           e.preventDefault();
-          openEmail();
+          handleEmail();
         }}
       >
         <div className="grid gap-5 sm:grid-cols-2">
@@ -120,21 +130,32 @@ export default function TripDesignForm({
           <textarea className={field} rows={3} placeholder={tm.messagePlaceholder} value={form.message} onChange={set("message")} />
         </div>
 
-        <button
-          type="submit"
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-baobab px-5 py-3.5 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-baobab-dark"
-        >
-          <Send size={16} />
-          {tm.submit}
-        </button>
-        <button
-          type="button"
-          onClick={openWhatsapp}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#25D366] px-5 py-3 text-sm font-semibold text-[#128C7E] transition-colors hover:bg-[#25D366]/10"
-        >
-          <MessageCircle size={17} />
-          {tm.whatsapp}
-        </button>
+        {sent ? (
+          <p className="rounded-lg bg-jungle/10 px-4 py-3 text-center text-sm font-medium text-jungle">
+            {lang === "fr"
+              ? "Demande envoyée ✓ Nous revenons vers vous rapidement."
+              : "Request sent ✓ We'll get back to you shortly."}
+          </p>
+        ) : (
+          <>
+            <button
+              type="submit"
+              disabled={pending}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-baobab px-5 py-3.5 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-baobab-dark disabled:opacity-60"
+            >
+              <Send size={16} />
+              {pending ? (lang === "fr" ? "Envoi…" : "Sending…") : tm.submit}
+            </button>
+            <button
+              type="button"
+              onClick={openWhatsapp}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#25D366] px-5 py-3 text-sm font-semibold text-[#128C7E] transition-colors hover:bg-[#25D366]/10"
+            >
+              <MessageCircle size={17} />
+              {tm.whatsapp}
+            </button>
+          </>
+        )}
         <p className="text-center text-xs text-ink-soft">{tm.note}</p>
       </form>
     </div>
