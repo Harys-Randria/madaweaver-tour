@@ -53,7 +53,21 @@ export async function generateMetadata({
   const locale: Locale = isLocale(lang) ? lang : "en";
   const circuit = await getCircuitBySlug(slug);
   if (!circuit) return {};
-  return { title: t(circuit.title, locale), description: t(circuit.summary, locale) };
+  const { url } = await getSettings();
+  const path = `/circuits/${slug}`;
+  return {
+    title: t(circuit.title, locale),
+    description: t(circuit.summary, locale),
+    alternates: {
+      canonical: `${url}/${locale}${path}`,
+      languages: { en: `${url}/en${path}`, fr: `${url}/fr${path}` },
+    },
+    openGraph: {
+      title: t(circuit.title, locale),
+      description: t(circuit.summary, locale),
+      images: circuit.gallery?.[0] ? [circuit.gallery[0]] : undefined,
+    },
+  };
 }
 
 export default async function CircuitDetailPage({
@@ -118,8 +132,42 @@ export default async function CircuitDetailPage({
     play: dict.gallery.play,
   };
 
+  // Données structurées : produit (avec prix) + fil d'Ariane → résultats enrichis Google.
+  const canonical = `${settings.url}/${locale}/circuits/${circuit.slug}`;
+  const heroImg = circuit.gallery?.[0] ? `${settings.url}${circuit.gallery[0]}` : undefined;
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: t(circuit.title, locale),
+      description: t(circuit.summary, locale),
+      ...(heroImg ? { image: heroImg } : {}),
+      brand: { "@type": "Brand", name: settings.name },
+      offers: {
+        "@type": "Offer",
+        price: circuit.priceFrom,
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
+        url: canonical,
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: dict.nav.home, item: `${settings.url}/${locale}` },
+        { "@type": "ListItem", position: 2, name: dict.nav.circuits, item: `${settings.url}/${locale}/circuits` },
+        { "@type": "ListItem", position: 3, name: t(circuit.title, locale), item: canonical },
+      ],
+    },
+  ];
+
   return (
     <article className="pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* ============================================== HERO encadré */}
       <section className="container-x pt-6 sm:pt-8">
         <Link
@@ -133,7 +181,7 @@ export default async function CircuitDetailPage({
         <div className="relative mt-4 flex min-h-80 items-end overflow-hidden rounded-2xl shadow-lg sm:min-h-104">
           {circuit.gallery?.[0] ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={circuit.gallery[0]} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+            <img src={circuit.gallery[0]} alt={`${t(circuit.title, locale)} — Madagascar`} fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
           ) : (
             <Scenery tone={circuit.tone} rich className="absolute inset-0 h-full w-full object-cover" />
           )}

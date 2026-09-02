@@ -53,7 +53,7 @@ export default async function AboutPage({
           <div className="relative aspect-video overflow-hidden rounded-2xl shadow-lg ring-1 ring-ink/8">
             {a.heroImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={a.heroImage} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={a.heroImage} alt={t(a.title, locale)} fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
             ) : (
               <Scenery tone="sunset" rich className="absolute inset-0 h-full w-full object-cover" />
             )}
@@ -75,7 +75,7 @@ export default async function AboutPage({
             <div className="relative aspect-4/3 overflow-hidden rounded-2xl shadow-lg ring-1 ring-ink/8">
               {a.storyImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={a.storyImage} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+                <img src={a.storyImage} alt={t(a.storyTitle, locale)} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
               ) : (
                 <WovenArt className="absolute inset-0 h-full w-full object-cover" />
               )}

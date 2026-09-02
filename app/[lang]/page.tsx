@@ -56,7 +56,7 @@ export default async function HomePage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/baobab1.webp"
-            alt=""
+            alt={t(settings.tagline, locale)}
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover"

@@ -26,7 +26,7 @@ export default function CircuitCard({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={circuit.gallery[0]}
-            alt=""
+            alt={t(circuit.title, lang)}
             loading="lazy"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.07]"
